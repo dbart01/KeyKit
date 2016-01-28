@@ -17,6 +17,7 @@
 		9A0CD6BC1D12F90300281ACE /* FaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD6B81D12F90300281ACE /* FaceView.swift */; };
 		9A0CD6BD1D12F90300281ACE /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD6B91D12F90300281ACE /* KeyboardView.swift */; };
 		9A0CD6C01D12F92900281ACE /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD6BF1D12F92900281ACE /* UIView+Extensions.swift */; };
+		9A0CD6C21D12F99800281ACE /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD6C11D12F99800281ACE /* KeyboardViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		9A0CD6B81D12F90300281ACE /* FaceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FaceView.swift; sourceTree = "<group>"; };
 		9A0CD6B91D12F90300281ACE /* KeyboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		9A0CD6BF1D12F92900281ACE /* UIView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		9A0CD6C11D12F99800281ACE /* KeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				9A0CD6A21D12F78900281ACE /* Utilities */,
 				9A0CD69F1D12F77A00281ACE /* Models */,
 				9A0CD6B51D12F8F900281ACE /* Views */,
+				9A0CD6C31D12F9A300281ACE /* Controller */,
 				9A0CD6981D12F50700281ACE /* Supporting Files */,
 			);
 			path = KeyKit;
@@ -117,6 +120,14 @@
 				9A0CD6BF1D12F92900281ACE /* UIView+Extensions.swift */,
 			);
 			name = Extensions;
+			sourceTree = "<group>";
+		};
+		9A0CD6C31D12F9A300281ACE /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				9A0CD6C11D12F99800281ACE /* KeyboardViewController.swift */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -198,6 +209,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A0CD69D1D12F77500281ACE /* Row.swift in Sources */,
+				9A0CD6C21D12F99800281ACE /* KeyboardViewController.swift in Sources */,
 				9A0CD6BD1D12F90300281ACE /* KeyboardView.swift in Sources */,
 				9A0CD6BB1D12F90300281ACE /* RowView.swift in Sources */,
 				9A0CD6C01D12F92900281ACE /* UIView+Extensions.swift in Sources */,
