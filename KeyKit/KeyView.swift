@@ -30,7 +30,6 @@ public class KeyView: UIButton {
         
         self.addTarget(self, action: #selector(touchedUpAction),   forControlEvents: .TouchUpInside)
         self.addTarget(self, action: #selector(touchedDownAction), forControlEvents: .TouchDown)
-        self.addTarget(self, action: #selector(touchedDownAction), forControlEvents: .TouchDragEnter)
         
         self.initState()
         self.initLabel()
