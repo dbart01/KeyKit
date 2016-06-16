@@ -51,7 +51,7 @@ public struct Face {
                 Key(label: "B", char: "b"),
                 Key(label: "N", char: "n"),
                 Key(label: "M", char: "m"),
-                Key(label: .Char("B"), value: .Action(.Shift)),
+                Key(label: .Char("B"), value: .Action(.Backspace)),
             ]),
             Row(keys: [
                 Key(label: .Char("123"),    value: .Action(.ChangeFace)),
