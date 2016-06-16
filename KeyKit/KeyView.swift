@@ -8,19 +8,29 @@
 
 import UIKit
 
+public protocol KeyTargetable: class {
+    func keyTouchedDown(keyView: KeyView)
+    func keyTouchedUp(keyView: KeyView)
+}
+
 public class KeyView: UIButton {
 
     public let key: Key
     
+    private let targetable: KeyTargetable
+    
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(key: Key, target: AnyObject, selector: Selector) {
-        self.key = key
+    public init(key: Key, targetable: KeyTargetable) {
+        self.key        = key
+        self.targetable = targetable
         
         super.init(frame: CGRectZero)
         
-        self.addTarget(target, action: selector, forControlEvents: .TouchUpInside)
+        self.addTarget(self, action: #selector(touchedUpAction),   forControlEvents: .TouchUpInside)
+        self.addTarget(self, action: #selector(touchedDownAction), forControlEvents: .TouchDown)
+        self.addTarget(self, action: #selector(touchedDownAction), forControlEvents: .TouchDragEnter)
         
         self.initState()
         self.initLabel()
@@ -56,5 +66,16 @@ public class KeyView: UIButton {
                 fatalError("KeyView failed to find image named: \(imageName)")
             }
         }
+    }
+    
+    // ----------------------------------
+    //  MARK: - Touch Tracking -
+    //
+    @objc private func touchedUpAction(sender: UIButton) {
+        self.targetable.keyTouchedUp(self)
+    }
+    
+    @objc private func touchedDownAction(sender: UIButton) {
+        self.targetable.keyTouchedDown(self)
     }
 }

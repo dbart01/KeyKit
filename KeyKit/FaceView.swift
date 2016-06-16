@@ -16,9 +16,9 @@ public class FaceView: UIView {
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(face: Face, target: AnyObject, selector: Selector) {
+    public init(face: Face, targetable: KeyTargetable) {
         self.face = face
-        self.rows = face.rows.viewsWith(target, selector: selector)
+        self.rows = face.rows.viewsWith(targetable)
         
         super.init(frame: CGRectZero)
         
@@ -50,9 +50,9 @@ public class FaceView: UIView {
 //  MARK: - CollectionType -
 //
 private extension CollectionType where Generator.Element == Row {
-    private func viewsWith(target: AnyObject, selector: Selector) -> [RowView] {
+    private func viewsWith(targetable: KeyTargetable) -> [RowView] {
         return self.map {
-            RowView(row: $0, target: target, selector: selector)
+            RowView(row: $0, targetable: targetable)
         }
     }
 }

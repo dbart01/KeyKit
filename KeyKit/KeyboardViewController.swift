@@ -90,13 +90,28 @@ public class KeyboardViewController: UIViewController {
     }
     
     private func faceViewFor(face: Face) -> FaceView {
-        return FaceView(face: face, target: self, selector: #selector(keyAction))
+        return FaceView(face: face, targetable: self)
     }
     
     // ----------------------------------
-    //  MARK: - UI Actions -
+    //  MARK: - Actions -
     //
-    @objc private func keyAction(keyView: KeyView) {
+    private func changeFaceTo(identifier: String) {
+        let face = self.faceFor(identifier)
+        self.keyboardView.setFaceView(self.faceViewFor(face))
+    }
+}
+
+// ----------------------------------
+//  MARK: - KeyTargetable -
+//
+extension KeyboardViewController: KeyTargetable {
+    
+    public func keyTouchedDown(keyView: KeyView) {
+        
+    }
+    
+    public func keyTouchedUp(keyView: KeyView) {
         self.delegate?.keyboardViewController(self, didReceiveInputFrom: keyView.key)
         
         switch keyView.key.value {
@@ -124,14 +139,5 @@ public class KeyboardViewController: UIViewController {
         case .Char(let character):
             print("\(character)", terminator: "")
         }
-        
-    }
-    
-    // ----------------------------------
-    //  MARK: - Actions -
-    //
-    private func changeFaceTo(identifier: String) {
-        let face = self.faceFor(identifier)
-        self.keyboardView.setFaceView(self.faceViewFor(face))
     }
 }

@@ -16,9 +16,9 @@ public class RowView: UIView {
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(row: Row, target: AnyObject, selector: Selector) {
+    public init(row: Row, targetable: KeyTargetable) {
         self.row  = row
-        self.keys = row.keys.viewsWith(target, selector: selector)
+        self.keys = row.keys.viewsWith(targetable)
         
         super.init(frame: CGRectZero)
         
@@ -50,9 +50,9 @@ public class RowView: UIView {
 //  MARK: - CollectionType -
 //
 private extension CollectionType where Generator.Element == Key {
-    private func viewsWith(target: AnyObject, selector: Selector) -> [KeyView] {
+    private func viewsWith(targetable: KeyTargetable) -> [KeyView] {
         return self.map {
-            KeyView(key: $0, target: target, selector: selector)
+            KeyView(key: $0, targetable: targetable)
         }
     }
 }
