@@ -28,25 +28,30 @@ public struct Key: Equatable {
         case Char(String)
     }
     
+    public enum Style {
+        case Main
+        case Alternate
+    }
+    
     public let label: Label
     public let value: Value
+    public let style: Style
     
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(label: Label, value: Value) {
+    public init(label: Label, value: Value, style: Style = .Main) {
         self.label = label
         self.value = value
+        self.style = style
     }
     
     public init(label: String, char: String) {
-        self.label = .Char(label)
-        self.value = .Char(char)
+        self.init(label: .Char(label), value: .Char(char))
     }
     
     public init(icon: String, char: String) {
-        self.label = .Icon(icon)
-        self.value = .Char(char)
+        self.init(label: .Icon(icon), value: .Char(char))
     }
 }
 
