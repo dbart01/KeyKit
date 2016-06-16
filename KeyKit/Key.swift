@@ -15,9 +15,9 @@ public struct Key: Equatable {
         case Char(String)
     }
     
-    public enum Action {
+    public enum Action: Equatable {
         case Shift
-        case ChangeFace
+        case ChangeFace(String)
         case Backspace
         case Return
         case Globe
@@ -59,6 +59,21 @@ public func ==(lhs: Key.Label, rhs: Key.Label) -> Bool {
         return true
     case (.Char(let left), .Char(let right)) where left == right:
         return true
+    default:
+        return false
+    }
+}
+
+public func ==(lhs: Key.Action, rhs: Key.Action) -> Bool {
+    switch (lhs, rhs) {
+    case (.Shift,     .Shift):     return true
+    case (.Backspace, .Backspace): return true
+    case (.Return,    .Return):    return true
+    case (.Globe,     .Globe):     return true
+        
+    case (.ChangeFace(let left), .ChangeFace(let right)) where left == right:
+        return true
+        
     default:
         return false
     }

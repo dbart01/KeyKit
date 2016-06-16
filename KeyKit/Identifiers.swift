@@ -10,5 +10,6 @@ import Foundation
 
 internal struct Identifier {
     internal static let Letters    = "com.keykit.letters"
+    internal static let Numbers    = "com.keykit.numbers"
     internal static let Characters = "com.keykit.characters"
 }

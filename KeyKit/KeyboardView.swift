@@ -10,7 +10,7 @@ import UIKit
 
 public class KeyboardView: UIView {
     
-    private(set) var faceView: FaceView {
+    private(set) var faceView: FaceView! {
         didSet {
             self.setNeedsLayout()
         }
@@ -20,11 +20,9 @@ public class KeyboardView: UIView {
     //  MARK: - Init -
     //
     public init(faceView: FaceView) {
-        self.faceView = faceView
-        
         super.init(frame: CGRectZero)
         
-        self.addSubview(self.faceView)
+        self.setFaceView(faceView)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -36,7 +34,12 @@ public class KeyboardView: UIView {
     //
     @nonobjc
     public func setFaceView(faceView: FaceView) {
+        if self.faceView != nil {
+            self.faceView.removeFromSuperview()
+        }
+        
         self.faceView = faceView
+        self.addSubview(faceView)
     }
     
     // ----------------------------------

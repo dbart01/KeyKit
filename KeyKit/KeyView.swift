@@ -57,34 +57,4 @@ public class KeyView: UIButton {
             }
         }
     }
-    
-//    private func initMarking() {
-//
-//        switch self.key.label {
-//        case .Char(let string):
-//
-//            let label              = UILabel(frame: self.bounds)
-//            label.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
-//            label.font             = UIFont.systemFontOfSize(18.0)
-//            label.textAlignment    = .Center
-//            label.lineBreakMode    = .ByClipping
-//            label.numberOfLines    = 1
-//            label.textColor        = UIColor.darkGrayColor()
-//            label.backgroundColor  = UIColor.clearColor()
-//            label.text             = string
-//            
-//            self.label = label
-//            self.addSubview(label)
-//            
-//        case .Icon(let imageName):
-//            
-//            let image                  = UIImage(named: imageName)!
-//            let imageView              = UIImageView(image: image)
-//            imageView.contentMode      = .Center
-//            imageView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-//            
-//            self.imageView = imageView
-//            self.addSubview(imageView)
-//        }
-//    }
 }
