@@ -107,11 +107,7 @@ public class KeyboardViewController: UIViewController {
 //
 extension KeyboardViewController: KeyTargetable {
     
-    public func keyTouchedDown(keyView: KeyView) {
-        
-    }
-    
-    public func keyTouchedUp(keyView: KeyView) {
+    public func keyReceivedAction(keyView: KeyView) {
         self.delegate?.keyboardViewController(self, didReceiveInputFrom: keyView.key)
         
         switch keyView.key.value {
@@ -139,5 +135,9 @@ extension KeyboardViewController: KeyTargetable {
         case .Char(let character):
             print("\(character)", terminator: "")
         }
+    }
+    
+    public func key(keyView: KeyView, changeTrackingState tracking: Bool) {
+        
     }
 }

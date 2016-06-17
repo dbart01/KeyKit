@@ -61,12 +61,12 @@ internal class TrackingView: UIView {
                  */
                 let currentTrackingKey = self.trackingKeyFor(touch)
                 if currentTrackingKey != keyView {
-                    self.endTrackingFor(touch)
+                    self.endTrackingFor(touch, cancelled: true)
                     self.beginTracking(keyView, forTouch: touch)
                 }
                 
             } else {
-                self.endTrackingFor(touch)
+                self.endTrackingFor(touch, cancelled: true)
             }
         }
     }
@@ -105,6 +105,7 @@ internal class TrackingView: UIView {
         self.trackingKeys.insert(keyView)
         
         keyView.sendActionsForControlEvents(.TouchDown)
+        keyView.setTrackingState(.Highlighted)
     }
     
     private func endTrackingFor(touch: UITouch, cancelled: Bool = false) {
@@ -117,6 +118,7 @@ internal class TrackingView: UIView {
             } else {
                 keyView.sendActionsForControlEvents(.TouchUpInside)
             }
+            keyView.setTrackingState(.Normal)
         }
     }
     

@@ -76,7 +76,7 @@ public extension Face {
                 Key(label: "L", char: "l", length: 10.00),
             ]),
             Row(keys: [
-                Key(label: "S", action: .Shift,     length: 11.20, style: .Alternate),
+                Key(label: "S", action: .Shift,     length: 13.00, style: .Alternate),
                 Key(label: "Z", char: "z",          length: 10.00),
                 Key(label: "X", char: "x",          length: 10.00),
                 Key(label: "C", char: "c",          length: 10.00),
@@ -84,13 +84,13 @@ public extension Face {
                 Key(label: "B", char: "b",          length: 10.00),
                 Key(label: "N", char: "n",          length: 10.00),
                 Key(label: "M", char: "m",          length: 10.00),
-                Key(label: "B", action: .Backspace, length: 11.20, style: .Alternate),
+                Key(label: "B", action: .Backspace, length: 13.00, style: .Alternate),
             ]),
             Row(keys: [
-                Key(label: .Char("123"),    value: .Action(.ChangeFace(Identifier.Numbers)), length: 11.20, style: .Alternate),
-                Key(label: .Char("G"),      value: .Action(.Globe),                          length: 11.20, style: .Alternate),
-                Key(label: .Char("space"),  value: .Char  (" "),                             length: 55.20),
-                Key(label: .Char("return"), value: .Action(.Return),                         length: 22.40, style: .Done),
+                Key(label: .Char("123"),    value: .Action(.ChangeFace(Identifier.Numbers)), length: 13.00, style: .Alternate),
+                Key(label: .Char("G"),      value: .Action(.Globe),                          length: 10.00, style: .Alternate),
+                Key(label: .Char(""),       value: .Char  (" "),                             length: 51.00),
+                Key(label: .Char("return"), value: .Action(.Return),                         length: 26.00, style: .Done),
             ]),
         ])
     }
@@ -121,19 +121,19 @@ public extension Face {
                 Key(label: "\"", char: "\"", length: 10.00),
             ]),
             Row(keys: [
-                Key(label: "#+=", action: .ChangeFace(Identifier.Characters), length: 11.20, style: .Alternate),
+                Key(label: "#+=", action: .ChangeFace(Identifier.Characters), length: 13.00, style: .Alternate),
                 Key(label: ".",   char: ".",                                  length: 12.40),
                 Key(label: ",",   char: ",",                                  length: 12.40),
                 Key(label: "?",   char: "?",                                  length: 12.40),
                 Key(label: "!",   char: "!",                                  length: 12.40),
                 Key(label: "'",   char: "'",                                  length: 12.40),
-                Key(label: "B",   action: .Backspace,                         length: 11.20, style: .Alternate),
+                Key(label: "B",   action: .Backspace,                         length: 13.00, style: .Alternate),
             ]),
             Row(keys: [
-                Key(label: .Char("ABC"),    value: .Action(.ChangeFace(Identifier.Letters)), length: 11.20, style: .Alternate),
-                Key(label: .Char("G"),      value: .Action(.Globe),                          length: 11.20, style: .Alternate),
-                Key(label: .Char("space"),  value: .Char  (" "),                             length: 55.20),
-                Key(label: .Char("return"), value: .Action(.Return),                         length: 22.40, style: .Done),
+                Key(label: .Char("ABC"),    value: .Action(.ChangeFace(Identifier.Letters)), length: 13.00, style: .Alternate),
+                Key(label: .Char("G"),      value: .Action(.Globe),                          length: 10.00, style: .Alternate),
+                Key(label: .Char(""),       value: .Char  (" "),                             length: 51.00),
+                Key(label: .Char("return"), value: .Action(.Return),                         length: 26.00, style: .Done),
             ]),
         ])
     }
@@ -165,19 +165,19 @@ public extension Face {
                 Key(label: "\u{2022}", char: "\u{2022}", length: 10.00),
             ]),
             Row(keys: [
-                Key(label: "123", action: .ChangeFace(Identifier.Numbers), length: 11.20, style: .Alternate),
+                Key(label: "123", action: .ChangeFace(Identifier.Numbers), length: 13.00, style: .Alternate),
                 Key(label: ".",   char: ".",                               length: 12.40),
                 Key(label: ",",   char: ",",                               length: 12.40),
                 Key(label: "?",   char: "?",                               length: 12.40),
                 Key(label: "!",   char: "!",                               length: 12.40),
                 Key(label: "'",   char: "'",                               length: 12.40),
-                Key(label: "B",   action: .Backspace,                      length: 11.20, style: .Alternate),
+                Key(label: "B",   action: .Backspace,                      length: 13.00, style: .Alternate),
             ]),
             Row(keys: [
-                Key(label: .Char("ABC"),    value: .Action(.ChangeFace(Identifier.Letters)), length: 11.20, style: .Alternate),
-                Key(label: .Char("G"),      value: .Action(.Globe),                          length: 11.20, style: .Alternate),
-                Key(label: .Char("space"),  value: .Char  (" "),                             length: 55.20),
-                Key(label: .Char("return"), value: .Action(.Return),                         length: 22.40, style: .Done),
+                Key(label: .Char("ABC"),    value: .Action(.ChangeFace(Identifier.Letters)), length: 13.00, style: .Alternate),
+                Key(label: .Char("G"),      value: .Action(.Globe),                          length: 10.00, style: .Alternate),
+                Key(label: .Char(""),       value: .Char  (" "),                             length: 51.00),
+                Key(label: .Char("return"), value: .Action(.Return),                         length: 26.00, style: .Done),
             ]),
         ])
     }

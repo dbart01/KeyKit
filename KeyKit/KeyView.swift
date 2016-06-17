@@ -9,12 +9,18 @@
 import UIKit
 
 public protocol KeyTargetable: class {
-    func keyTouchedDown(keyView: KeyView)
-    func keyTouchedUp(keyView: KeyView)
+    func keyReceivedAction(keyView: KeyView)
+    func key(keyView: KeyView, changeTrackingState tracking: Bool)
 }
 
 public class KeyView: UIButton {
 
+    public enum TrackingState {
+        case Normal
+        case Highlighted
+        case Selected
+    }
+    
     public let key: Key
     
     private let targetable: KeyTargetable
@@ -28,8 +34,9 @@ public class KeyView: UIButton {
         
         super.init(frame: CGRectZero)
         
-        self.addTarget(self, action: #selector(touchedUpAction),   forControlEvents: .TouchUpInside)
-        self.addTarget(self, action: #selector(touchedDownAction), forControlEvents: .TouchDown)
+        self.addTarget(self, action: #selector(touchUp),        forControlEvents: .TouchUpInside)
+        self.addTarget(self, action: #selector(touchDown),      forControlEvents: .TouchDown)
+        self.addTarget(self, action: #selector(touchCancelled), forControlEvents: .TouchCancel)
         
         self.initState()
         self.initLabel()
@@ -47,8 +54,11 @@ public class KeyView: UIButton {
             label.numberOfLines = 1
         }
         
-        self.setTitleColor(UIColor.darkGrayColor(), forState: .Normal)
+        self.setTitleColor(UIColor.darkGrayColor(),    forState: .Normal)
         self.setTitleShadowColor(UIColor.clearColor(), forState: .Normal)
+        
+        self.setBackgroundImage(KeyView.backgroundImage,         forState: .Normal)
+        self.setBackgroundImage(KeyView.selectedBackgroundImage, forState: .Highlighted)
     }
     
     private func initLabel() {
@@ -68,13 +78,90 @@ public class KeyView: UIButton {
     }
     
     // ----------------------------------
-    //  MARK: - Touch Tracking -
+    //  MARK: - State Handling -
     //
-    @objc private func touchedUpAction(sender: UIButton) {
-        self.targetable.keyTouchedUp(self)
+    public func setTrackingState(state: TrackingState) {
+        switch state {
+        case .Normal:
+            self.highlighted = false
+            self.selected    = false
+            
+        case .Highlighted:
+            self.highlighted = true
+            self.selected    = false
+            
+        case .Selected:
+            self.highlighted = false
+            self.selected    = true
+        }
     }
     
-    @objc private func touchedDownAction(sender: UIButton) {
-        self.targetable.keyTouchedDown(self)
+    // ----------------------------------
+    //  MARK: - Touch Tracking -
+    //
+    @objc private func touchUp(sender: UIButton) {
+        self.targetable.keyReceivedAction(self)
+        self.targetable.key(self, changeTrackingState: false)
+    }
+    
+    @objc private func touchDown(sender: UIButton) {
+        self.targetable.key(self, changeTrackingState: true)
+    }
+    
+    @objc private func touchCancelled(sender: UIButton) {
+        self.targetable.key(self, changeTrackingState: false)
+    }
+    
+    // ----------------------------------
+    //  MARK: - Drawing -
+    //
+    private static var backgroundImage: UIImage = {
+        return KeyView.drawBackgroudImage(.Normal)
+    }()
+    
+    private static var selectedBackgroundImage: UIImage = {
+        return KeyView.drawBackgroudImage(.Highlighted)
+    }()
+    
+    private static func drawBackgroudImage(state: TrackingState) -> UIImage {
+        
+        let offset = CGFloat(1.5)
+        let space  = CGFloat(3.0)
+        let radius = CGFloat(6.0)
+        let line   = 1.0 / UIScreen.mainScreen().scale * 3.0
+        
+        let length = (space * 2.0) + (radius * 2.0) + line + 10.0
+        let rect   = CGRect(x: 0.0, y: 0.0, width: length, height: length)
+        
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+        
+        let path       = UIBezierPath(roundedRect: rect.insetBy(dx: space + line * 0.5, dy: space + line * 0.5), cornerRadius: radius)
+        path.lineWidth = line
+        
+        switch state {
+        case .Normal:
+            path.applyTransform(CGAffineTransformMakeTranslation(0.0, offset))
+            UIColor.darkGrayColor().setFill()
+            path.fill()
+            
+            path.applyTransform(CGAffineTransformMakeTranslation(0.0, -offset))
+            UIColor.whiteColor().setFill()
+            path.fill()
+            
+        case .Highlighted:
+            path.applyTransform(CGAffineTransformMakeTranslation(0.0, offset))
+            UIColor.whiteColor().setFill()
+            path.fill()
+            
+        case .Selected:
+            path.applyTransform(CGAffineTransformMakeTranslation(0.0, offset))
+            UIColor(white: 0.8, alpha: 1.0).setFill()
+            path.fill()
+        }
+        
+        let inset = space + radius + line * 2.0
+        let image = UIGraphicsGetImageFromCurrentImageContext().resizableImageWithCapInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
+        UIGraphicsEndImageContext()
+        return image
     }
 }
