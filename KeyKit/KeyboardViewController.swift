@@ -19,8 +19,8 @@ public protocol KeyboardDelegate: class {
 
 public class KeyboardViewController: UIViewController {
     
-    weak var delegate:      KeyboardDelegate?
-    weak var documentProxy: UITextDocumentProxy?
+    public weak var delegate:      KeyboardDelegate?
+    public weak var documentProxy: UITextDocumentProxy?
     
     private var keyboardView: KeyboardView!
     private var faces:        [String : Face] = [:]
@@ -156,12 +156,17 @@ extension KeyboardViewController: KeyTargetable {
                 self.setShiftEnabled(!self.shiftEnabled)
                 
             case .Return:
-                print("")
+                self.documentProxy?.insertText("\n")
                 self.delegate?.keyboardViewControllerDidReturn(self)
             }
             
         case .Char(let character):
-            self.documentProxy?.insertText(character)
+            
+            var text = character
+            if self.shiftEnabled {
+                text = character.capitalizedString
+            }
+            self.documentProxy?.insertText(text)
             print("\(character)", terminator: "")
         }
     }
