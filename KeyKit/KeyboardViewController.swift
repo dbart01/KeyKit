@@ -45,21 +45,11 @@ public class KeyboardViewController: UIViewController {
         
         let face                           = self.faceFor(Identifier.Letters)
         self.keyboardView                  = KeyboardView(faceView: self.faceViewFor(face))
+        self.keyboardView.frame            = self.view.bounds
         self.keyboardView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         self.keyboardView.backgroundColor  = UIColor.lightGrayColor()
         
         self.view.addSubview(self.keyboardView)
-    }
-    
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        
-    }
-    
-    public override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        self.keyboardView.frame = self.view.bounds
     }
     
     // ----------------------------------
