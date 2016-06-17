@@ -19,11 +19,13 @@ public protocol KeyboardDelegate: class {
 
 public class KeyboardViewController: UIViewController {
     
-    weak var delegate: KeyboardDelegate?
+    weak var delegate:      KeyboardDelegate?
+    weak var documentProxy: UITextDocumentProxy?
     
     private var keyboardView: KeyboardView!
     private var faces:        [String : Face] = [:]
     
+    private var shiftKeys:    [KeyView] = []
     private var shiftEnabled: Bool = false
 
     // ----------------------------------
@@ -43,11 +45,12 @@ public class KeyboardViewController: UIViewController {
     public override func loadView() {
         super.loadView()
         
-        let face                           = self.faceFor(Identifier.Letters)
-        self.keyboardView                  = KeyboardView(faceView: self.faceViewFor(face))
+        self.keyboardView                  = KeyboardView(faceView: nil)
         self.keyboardView.frame            = self.view.bounds
         self.keyboardView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         self.keyboardView.backgroundColor  = UIColor.lightGrayColor()
+        
+        self.changeFaceTo(Identifier.Letters)
         
         self.view.addSubview(self.keyboardView)
     }
@@ -83,11 +86,46 @@ public class KeyboardViewController: UIViewController {
     }
     
     // ----------------------------------
+    //  MARK: - Shift State -
+    //
+    private func referenceShiftKeys() {
+        self.shiftKeys = self.keyboardView.keyViewsMatching { (key) -> Bool in
+            if case .Action(.Shift) = key.value {
+                return true
+            }
+            return false
+        }
+    }
+    
+    private func setShiftEnabled(enabled: Bool) {
+        self.shiftEnabled = enabled
+        for keyView in self.shiftKeys {
+            keyView.setTrackingState(enabled ? .Selected : .Normal)
+        }
+    }
+    
+    // ----------------------------------
+    //  MARK: - Updates -
+    //
+    
+    private func updateForCurrentDocumentProxy() {
+        if let documentProxy = self.documentProxy,
+            let content = documentProxy.documentContextBeforeInput {
+            
+            if content.characters.count < 1 {
+                self.setShiftEnabled(true)
+            }
+        }
+    }
+    
+    // ----------------------------------
     //  MARK: - Actions -
     //
     private func changeFaceTo(identifier: String) {
         let face = self.faceFor(identifier)
         self.keyboardView.setFaceView(self.faceViewFor(face))
+        
+        self.referenceShiftKeys()
     }
 }
 
@@ -108,14 +146,14 @@ extension KeyboardViewController: KeyTargetable {
                 self.delegate?.keyboardViewControllerDidRequestNextKeyboard(self)
                 
             case .Backspace:
+                self.documentProxy?.deleteBackward()
                 self.delegate?.keyboardViewController(self, didBackspaceLength: 1)
                 
             case .ChangeFace(let identifier):
                 self.changeFaceTo(identifier)
                 
             case .Shift:
-                self.shiftEnabled = !self.shiftEnabled
-                keyView.setTrackingState(self.shiftEnabled ? .Selected : .Normal)
+                self.setShiftEnabled(!self.shiftEnabled)
                 
             case .Return:
                 print("")
@@ -123,6 +161,7 @@ extension KeyboardViewController: KeyTargetable {
             }
             
         case .Char(let character):
+            self.documentProxy?.insertText(character)
             print("\(character)", terminator: "")
         }
     }

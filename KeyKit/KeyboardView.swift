@@ -21,11 +21,14 @@ public class KeyboardView: UIView {
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(faceView: FaceView) {
+    public init(faceView: FaceView?) {
         super.init(frame: CGRectZero)
         
         self.initTrackingView()
-        self.setFaceView(faceView)
+        
+        if let faceView = faceView {
+            self.setFaceView(faceView)
+        }
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -75,5 +78,20 @@ public class KeyboardView: UIView {
         
         self.faceView.frame     = self.bounds
         self.trackingView.frame = self.bounds
+    }
+    
+    // ----------------------------------
+    //  MARK: - Key Queries -
+    //
+    public func keyViewsMatching(predicate: (Key) -> Bool) -> [KeyView] {
+        var results = [KeyView]()
+        for row in self.faceView.rows {
+            for key in row.keys {
+                if predicate(key.key) {
+                    results.append(key)
+                }
+            }
+        }
+        return results
     }
 }
