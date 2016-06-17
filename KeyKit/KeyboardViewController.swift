@@ -46,14 +46,13 @@ public class KeyboardViewController: UIViewController {
         let face                           = self.faceFor(Identifier.Letters)
         self.keyboardView                  = KeyboardView(faceView: self.faceViewFor(face))
         self.keyboardView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-        self.keyboardView.backgroundColor  = UIColor.clearColor()
+        self.keyboardView.backgroundColor  = UIColor.lightGrayColor()
         
         self.view.addSubview(self.keyboardView)
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        
         
     }
     
@@ -126,6 +125,7 @@ extension KeyboardViewController: KeyTargetable {
                 
             case .Shift:
                 self.shiftEnabled = !self.shiftEnabled
+                keyView.setTrackingState(self.shiftEnabled ? .Selected : .Normal)
                 
             case .Return:
                 print("")

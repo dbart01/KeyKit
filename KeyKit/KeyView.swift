@@ -57,8 +57,9 @@ public class KeyView: UIButton {
         self.setTitleColor(UIColor.darkGrayColor(),    forState: .Normal)
         self.setTitleShadowColor(UIColor.clearColor(), forState: .Normal)
         
-        self.setBackgroundImage(KeyView.backgroundImage,         forState: .Normal)
-        self.setBackgroundImage(KeyView.selectedBackgroundImage, forState: .Highlighted)
+        self.setBackgroundImage(KeyView.backgroundImage,            forState: .Normal)
+        self.setBackgroundImage(KeyView.highlightedBackgroundImage, forState: .Highlighted)
+        self.setBackgroundImage(KeyView.selectedBackgroundImage,    forState: .Selected)
     }
     
     private func initLabel() {
@@ -119,8 +120,12 @@ public class KeyView: UIButton {
         return KeyView.drawBackgroudImage(.Normal)
     }()
     
-    private static var selectedBackgroundImage: UIImage = {
+    private static var highlightedBackgroundImage: UIImage = {
         return KeyView.drawBackgroudImage(.Highlighted)
+    }()
+    
+    private static var selectedBackgroundImage: UIImage = {
+        return KeyView.drawBackgroudImage(.Selected)
     }()
     
     private static func drawBackgroudImage(state: TrackingState) -> UIImage {

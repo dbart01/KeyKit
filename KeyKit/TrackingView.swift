@@ -104,8 +104,9 @@ internal class TrackingView: UIView {
         self.touchingKeys[touch] = keyView
         self.trackingKeys.insert(keyView)
         
-        keyView.sendActionsForControlEvents(.TouchDown)
         keyView.setTrackingState(.Highlighted)
+        
+        keyView.sendActionsForControlEvents(.TouchDown)
     }
     
     private func endTrackingFor(touch: UITouch, cancelled: Bool = false) {
@@ -113,12 +114,13 @@ internal class TrackingView: UIView {
             self.trackingKeys.remove(keyView)
             self.touchingKeys[touch] = nil
             
+            keyView.setTrackingState(.Normal)
+            
             if cancelled {
                 keyView.sendActionsForControlEvents(.TouchCancel)
             } else {
                 keyView.sendActionsForControlEvents(.TouchUpInside)
             }
-            keyView.setTrackingState(.Normal)
         }
     }
     
