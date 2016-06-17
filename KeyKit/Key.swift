@@ -31,27 +31,34 @@ public struct Key: Equatable {
     public enum Style {
         case Main
         case Alternate
+        case Done
     }
     
-    public let label: Label
-    public let value: Value
-    public let style: Style
+    public let label:  Label
+    public let value:  Value
+    public let length: Double
+    public let style:  Style
     
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(label: Label, value: Value, style: Style = .Main) {
-        self.label = label
-        self.value = value
-        self.style = style
+    public init(label: Label, value: Value, length: Double, style: Style = .Main) {
+        self.label  = label
+        self.value  = value
+        self.length = length
+        self.style  = style
     }
     
-    public init(label: String, char: String) {
-        self.init(label: .Char(label), value: .Char(char))
+    public init(label: String, char: String, length: Double) {
+        self.init(label: .Char(label), value: .Char(char), length: length)
     }
     
-    public init(icon: String, char: String) {
-        self.init(label: .Icon(icon), value: .Char(char))
+    public init(label: String, action: Key.Action, length: Double, style: Style = .Main) {
+        self.init(label: .Char(label), value: .Action(action), length: length, style: style)
+    }
+    
+    public init(icon: String, char: String, length: Double) {
+        self.init(label: .Icon(icon), value: .Char(char), length: length)
     }
 }
 
@@ -96,5 +103,9 @@ public func ==(lhs: Key.Value, rhs: Key.Value) -> Bool {
 }
 
 public func ==(lhs: Key, rhs: Key) -> Bool {
-    return lhs.label == rhs.label && lhs.value == rhs.value
+    return
+        lhs.label  == rhs.label &&
+        lhs.value  == rhs.value &&
+        lhs.length == rhs.length &&
+        lhs.style  == rhs.style
 }
