@@ -16,17 +16,39 @@ public class KeyboardView: UIView {
         }
     }
     
+    private var trackingView: TrackingView!
+    
     // ----------------------------------
     //  MARK: - Init -
     //
     public init(faceView: FaceView) {
         super.init(frame: CGRectZero)
         
+        self.initTrackingView()
         self.setFaceView(faceView)
     }
     
     required public init?(coder aDecoder: NSCoder) {
         fatalError()
+    }
+    
+    // ----------------------------------
+    //  MARK: - Tracking View -
+    //
+    private func initTrackingView() {
+        self.trackingView                  = TrackingView(frame: self.bounds)
+        self.trackingView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
+        self.trackingView.backgroundColor  = UIColor.clearColor()
+        
+        self.addSubview(self.trackingView)
+    }
+    
+    private func surfaceTrackingView() {
+        self.bringSubviewToFront(self.trackingView)
+    }
+    
+    private func startTracking(faceView: FaceView) {
+        self.trackingView.faceView = faceView
     }
     
     // ----------------------------------
@@ -40,6 +62,9 @@ public class KeyboardView: UIView {
         
         self.faceView = faceView
         self.addSubview(faceView)
+        
+        self.surfaceTrackingView()
+        self.startTracking(faceView)
     }
     
     // ----------------------------------
@@ -48,6 +73,7 @@ public class KeyboardView: UIView {
     public override func layoutSubviews() {
         super.layoutSubviews()
         
-        self.faceView.frame = self.bounds
+        self.faceView.frame     = self.bounds
+        self.trackingView.frame = self.bounds
     }
 }
