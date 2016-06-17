@@ -23,7 +23,7 @@ public class KeyView: UIButton {
     
     public let key: Key
     
-    private let targetable: KeyTargetable
+    private weak var targetable: KeyTargetable?
     
     // ----------------------------------
     //  MARK: - Init -
@@ -101,16 +101,16 @@ public class KeyView: UIButton {
     //  MARK: - Touch Tracking -
     //
     @objc private func touchUp(sender: UIButton) {
-        self.targetable.keyReceivedAction(self)
-        self.targetable.key(self, changeTrackingState: false)
+        self.targetable?.keyReceivedAction(self)
+        self.targetable?.key(self, changeTrackingState: false)
     }
     
     @objc private func touchDown(sender: UIButton) {
-        self.targetable.key(self, changeTrackingState: true)
+        self.targetable?.key(self, changeTrackingState: true)
     }
     
     @objc private func touchCancelled(sender: UIButton) {
-        self.targetable.key(self, changeTrackingState: false)
+        self.targetable?.key(self, changeTrackingState: false)
     }
     
     // ----------------------------------
