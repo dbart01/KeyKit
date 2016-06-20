@@ -26,12 +26,17 @@ public class KeyboardViewController: UIViewController {
         }
     }
     
+    public var usePeriodShortcut = true
+    public var allowCapsLock     = false
+    
     private var keyboardView: KeyboardView!
     private var faces:        [String : Face] = [:]
     
-    private var shiftKeys:       [KeyView] = []
-    private var shiftEnabled:    Bool = false
-    private var capsLockEnabled: Bool = false
+    private var shiftKeys:         [KeyView] = []
+    private var shiftEnabled:      Bool = false
+    private var capsLockEnabled:   Bool = false
+    private var lastInsertedSpace: Bool = false
+    private var insertedShortcut:  Bool = false
 
     // ----------------------------------
     //  MARK: - Init -
@@ -134,12 +139,33 @@ public class KeyboardViewController: UIViewController {
     }
     
     private func processInsertion(character: String, withProxy proxy: UITextDocumentProxy?) {
-        
-        var text = character
-        if self.shiftEnabled {
-            text = character.capitalizedString
+        if let proxy = proxy {
+            
+            switch character {
+            case " " where self.usePeriodShortcut:
+                if !self.lastInsertedSpace {
+                    self.lastInsertedSpace = true
+                    
+                } else if !self.insertedShortcut {
+                    self.lastInsertedSpace = false
+                    self.insertedShortcut  = true
+                    
+                    proxy.deleteBackward()
+                    proxy.insertText(".")
+                }
+                proxy.insertText(character)
+                
+            default:
+                var text = character
+                if self.shiftEnabled {
+                    text = character.capitalizedString
+                }
+                proxy.insertText(text)
+                
+                self.insertedShortcut  = false
+                self.lastInsertedSpace = false
+            }
         }
-        proxy?.insertText(text)
         
         /* ---------------------------------
          ** Disable shift key after each key
