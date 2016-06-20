@@ -9,12 +9,13 @@
 import UIKit
 
 public protocol KeyboardDelegate: class {
+    func keyboardViewControllerDidRequestNextKeyboard(controller: KeyboardViewController)
+    
     func keyboardViewController(controller: KeyboardViewController, didReceiveInputFrom key: Key)
     func keyboardViewController(controller: KeyboardViewController, didInputCharacter character: String)
     func keyboardViewController(controller: KeyboardViewController, didBackspaceLength length: Int)
     
     func keyboardViewControllerDidReturn(controller: KeyboardViewController)
-    func keyboardViewControllerDidRequestNextKeyboard(controller: KeyboardViewController)
 }
 
 public class KeyboardViewController: UIViewController {
@@ -22,7 +23,7 @@ public class KeyboardViewController: UIViewController {
     public weak var delegate:      KeyboardDelegate?
     public weak var documentProxy: UITextDocumentProxy? {
         didSet {
-            self.updateStateForCurrentInsertionPointIn(self.documentProxy)
+            self.updateShiftStateIn(self.documentProxy)
         }
     }
     
@@ -117,11 +118,26 @@ public class KeyboardViewController: UIViewController {
     // ----------------------------------
     //  MARK: - Updates -
     //
-    private func updateStateForCurrentInsertionPointIn(proxy: UITextDocumentProxy?) {
+    private func updateShiftStateIn(proxy: UITextDocumentProxy?) {
         if let proxy = proxy {
             
             let content = proxy.documentContextBeforeInput ?? ""
-            if content.characters.count < 1 {
+            var enable  = false
+            
+            if content == "" {
+                enable = true
+            } else {
+                enable = content.suffix(2) == ". "
+            }
+            
+            self.setShiftEnabled(enable)
+            
+            /* ---------------------------------
+             ** Check the shift state and enable
+             ** all the keys in case the faces
+             ** have changed, etc.
+             */
+            if self.shiftEnabled {
                 self.setShiftEnabled(true)
             }
         }
@@ -130,15 +146,56 @@ public class KeyboardViewController: UIViewController {
     // ----------------------------------
     //  MARK: - Actions -
     //
+    private func handle(value: Key.Value, forKey key: Key?) {
+        if let key = key {
+            self.delegate?.keyboardViewController(self, didReceiveInputFrom: key)
+        }
+        
+        switch value {
+        case .Action(let action):
+            print("\nAction from: \(action)")
+            
+            switch action {
+            case .Globe:
+                self.delegate?.keyboardViewControllerDidRequestNextKeyboard(self)
+                
+            case .Backspace:
+                self.processBackspaceIn(self.documentProxy)
+                
+                self.delegate?.keyboardViewController(self, didBackspaceLength: 1)
+                
+            case .ChangeFace(let identifier):
+                self.changeFaceTo(identifier, inProxy: self.documentProxy)
+                
+            case .Shift:
+                self.setShiftEnabled(!self.shiftEnabled)
+                
+            case .Return:
+                self.handle(.Char("\n"), forKey: nil)
+                self.delegate?.keyboardViewControllerDidReturn(self)
+            }
+            
+        case .Char(let character):
+            self.processInsertion(character, withProxy: self.documentProxy)
+        }
+        
+        self.updateShiftStateIn(self.documentProxy)
+    }
+    
     private func changeFaceTo(identifier: String, inProxy proxy: UITextDocumentProxy?) {
         let face = self.faceFor(identifier)
         self.keyboardView.setFaceView(self.faceViewFor(face))
         
         self.referenceShiftKeys()
-        self.updateStateForCurrentInsertionPointIn(proxy)
     }
     
     private func processInsertion(character: String, withProxy proxy: UITextDocumentProxy?) {
+        
+        /* ---------------------------------
+         ** If a proxy is provided, we need
+         ** to handle the entered key events
+         ** appropriately.
+         */
         if let proxy = proxy {
             
             switch character {
@@ -164,16 +221,24 @@ public class KeyboardViewController: UIViewController {
                 
                 self.insertedShortcut  = false
                 self.lastInsertedSpace = false
+                
+                /* ---------------------------------
+                 ** Disable shift key after each key
+                 ** press, unless we're in caps lock
+                 ** mode.
+                 */
+                if self.shiftEnabled && !self.capsLockEnabled {
+                    self.handle(.Action(.Shift), forKey: nil)
+                }
+                
+                /* -----------------------------------
+                 ** Return to keyboard if the inserted
+                 ** char is an apostrophe.
+                 */
+                if text == "'" {
+                    self.handle(.Action(.ChangeFace(Identifier.Letters)), forKey: nil)
+                }
             }
-        }
-        
-        /* ---------------------------------
-         ** Disable shift key after each key
-         ** press, unless we're in caps lock
-         ** mode.
-         */
-        if self.shiftEnabled && !self.capsLockEnabled {
-            self.setShiftEnabled(false)
         }
         
         print("\(character)", terminator: "")
@@ -181,6 +246,9 @@ public class KeyboardViewController: UIViewController {
     
     private func processBackspaceIn(proxy: UITextDocumentProxy?) {
         proxy?.deleteBackward()
+        
+        self.insertedShortcut  = false
+        self.lastInsertedSpace = false
     }
 }
 
@@ -190,42 +258,19 @@ public class KeyboardViewController: UIViewController {
 extension KeyboardViewController: KeyTargetable {
     
     public func keyReceivedAction(keyView: KeyView) {
-        self.delegate?.keyboardViewController(self, didReceiveInputFrom: keyView.key)
-        
-        switch keyView.key.value {
-        case .Action(let action):
-            print("\nAction from: \(action)")
-            
-            switch action {
-            case .Globe:
-                self.delegate?.keyboardViewControllerDidRequestNextKeyboard(self)
-                
-            case .Backspace:
-                self.processBackspaceIn(self.documentProxy)
-                self.updateStateForCurrentInsertionPointIn(self.documentProxy)
-                
-                self.delegate?.keyboardViewController(self, didBackspaceLength: 1)
-                
-            case .ChangeFace(let identifier):
-                self.changeFaceTo(identifier, inProxy: self.documentProxy)
-                
-            case .Shift:
-                self.setShiftEnabled(!self.shiftEnabled)
-                
-            case .Return:
-                self.processInsertion("\n", withProxy: self.documentProxy)
-                self.updateStateForCurrentInsertionPointIn(self.documentProxy)
-                
-                self.delegate?.keyboardViewControllerDidReturn(self)
-            }
-            
-        case .Char(let character):
-            self.processInsertion(character, withProxy: self.documentProxy)
-            self.updateStateForCurrentInsertionPointIn(self.documentProxy)
-        }
+        self.handle(keyView.key.value, forKey: keyView.key)
     }
     
     public func key(keyView: KeyView, changeTrackingState tracking: Bool) {
         
+    }
+}
+
+// ----------------------------------
+//  MARK: - String -
+//
+private extension String {
+    func suffix(length: Int) -> String {
+        return String(self.characters.suffix(length))
     }
 }
