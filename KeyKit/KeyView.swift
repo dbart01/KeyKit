@@ -54,7 +54,8 @@ public class KeyView: UIButton {
             label.numberOfLines = 1
         }
         
-        self.setTitleColor(UIColor.darkGrayColor(),    forState: .Normal)
+        self.tintColor = UIColor.darkGrayColor()
+        self.setTitleColor(self.tintColor,             forState: .Normal)
         self.setTitleShadowColor(UIColor.clearColor(), forState: .Normal)
         
         self.setBackgroundImage(KeyView.backgroundImage,            forState: .Normal)
@@ -70,10 +71,10 @@ public class KeyView: UIButton {
             
         case .Icon(let imageName):
             
-            if let image = UIImage(named: imageName) {
-                self.setImage(image, forState: .Normal)
+            if let image = UIImage(named: imageName, inBundle: NSBundle(forClass: self.classForCoder), compatibleWithTraitCollection: nil) {
+                self.setImage(image.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
             } else {
-                fatalError("KeyView failed to find image named: \(imageName)")
+                fatalError("KeyView failed to find image named: \(imageName).")
             }
         }
     }
