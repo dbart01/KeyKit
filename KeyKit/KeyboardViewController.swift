@@ -22,7 +22,7 @@ public class KeyboardViewController: UIViewController {
     public weak var delegate:      KeyboardDelegate?
     public weak var documentProxy: UITextDocumentProxy? {
         didSet {
-            self.updateStateForCurrentInsertionPoint()
+            self.updateStateForCurrentInsertionPointIn(self.documentProxy)
         }
     }
     
@@ -55,7 +55,7 @@ public class KeyboardViewController: UIViewController {
         self.keyboardView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         self.keyboardView.backgroundColor  = UIColor.lightGrayColor()
         
-        self.changeFaceTo(Identifier.Letters)
+        self.changeFaceTo(Identifier.Letters, inProxy: self.documentProxy)
         
         self.view.addSubview(self.keyboardView)
     }
@@ -112,10 +112,10 @@ public class KeyboardViewController: UIViewController {
     // ----------------------------------
     //  MARK: - Updates -
     //
-    private func updateStateForCurrentInsertionPoint() {
-        if let documentProxy = self.documentProxy {
+    private func updateStateForCurrentInsertionPointIn(proxy: UITextDocumentProxy?) {
+        if let proxy = proxy {
             
-            let content = documentProxy.documentContextBeforeInput ?? ""
+            let content = proxy.documentContextBeforeInput ?? ""
             if content.characters.count < 1 {
                 self.setShiftEnabled(true)
             }
@@ -125,12 +125,36 @@ public class KeyboardViewController: UIViewController {
     // ----------------------------------
     //  MARK: - Actions -
     //
-    private func changeFaceTo(identifier: String) {
+    private func changeFaceTo(identifier: String, inProxy proxy: UITextDocumentProxy?) {
         let face = self.faceFor(identifier)
         self.keyboardView.setFaceView(self.faceViewFor(face))
         
         self.referenceShiftKeys()
-        self.updateStateForCurrentInsertionPoint()
+        self.updateStateForCurrentInsertionPointIn(proxy)
+    }
+    
+    private func processInsertion(character: String, withProxy proxy: UITextDocumentProxy?) {
+        
+        var text = character
+        if self.shiftEnabled {
+            text = character.capitalizedString
+        }
+        proxy?.insertText(text)
+        
+        /* ---------------------------------
+         ** Disable shift key after each key
+         ** press, unless we're in caps lock
+         ** mode.
+         */
+        if self.shiftEnabled && !self.capsLockEnabled {
+            self.setShiftEnabled(false)
+        }
+        
+        print("\(character)", terminator: "")
+    }
+    
+    private func processBackspaceIn(proxy: UITextDocumentProxy?) {
+        proxy?.deleteBackward()
     }
 }
 
@@ -151,40 +175,28 @@ extension KeyboardViewController: KeyTargetable {
                 self.delegate?.keyboardViewControllerDidRequestNextKeyboard(self)
                 
             case .Backspace:
-                self.documentProxy?.deleteBackward()
+                self.processBackspaceIn(self.documentProxy)
+                self.updateStateForCurrentInsertionPointIn(self.documentProxy)
+                
                 self.delegate?.keyboardViewController(self, didBackspaceLength: 1)
                 
             case .ChangeFace(let identifier):
-                self.changeFaceTo(identifier)
+                self.changeFaceTo(identifier, inProxy: self.documentProxy)
                 
             case .Shift:
                 self.setShiftEnabled(!self.shiftEnabled)
                 
             case .Return:
-                self.documentProxy?.insertText("\n")
+                self.processInsertion("\n", withProxy: self.documentProxy)
+                self.updateStateForCurrentInsertionPointIn(self.documentProxy)
+                
                 self.delegate?.keyboardViewControllerDidReturn(self)
             }
             
         case .Char(let character):
-            
-            var text = character
-            if self.shiftEnabled {
-                text = character.capitalizedString
-            }
-            self.documentProxy?.insertText(text)
-            
-            /* ---------------------------------
-             ** Disable shift key after each key
-             ** press, unless we're in caps lock
-             ** mode.
-             */
-            if self.shiftEnabled && !self.capsLockEnabled {
-                self.setShiftEnabled(false)
-            }
-            print("\(character)", terminator: "")
+            self.processInsertion(character, withProxy: self.documentProxy)
+            self.updateStateForCurrentInsertionPointIn(self.documentProxy)
         }
-        
-        self.updateStateForCurrentInsertionPoint()
     }
     
     public func key(keyView: KeyView, changeTrackingState tracking: Bool) {
