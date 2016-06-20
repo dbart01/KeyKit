@@ -62,6 +62,7 @@ public class KeyboardViewController: UIViewController {
         self.keyboardView.backgroundColor  = UIColor.lightGrayColor()
         
         self.changeFaceTo(Identifier.Letters, inProxy: self.documentProxy)
+        self.updateShiftStateIn(self.documentProxy)
         
         self.view.addSubview(self.keyboardView)
     }
@@ -261,8 +262,10 @@ extension KeyboardViewController: KeyTargetable {
         self.handle(keyView.key.value, forKey: keyView.key)
     }
     
-    public func key(keyView: KeyView, changeTrackingState tracking: Bool) {
-        
+    public func key(keyView: KeyView, didChangeTrackingState tracking: Bool) {
+        if tracking {
+            Click.play()
+        }
     }
 }
 

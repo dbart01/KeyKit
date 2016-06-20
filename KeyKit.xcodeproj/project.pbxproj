@@ -18,6 +18,7 @@
 		9A0CD6BD1D12F90300281ACE /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD6B91D12F90300281ACE /* KeyboardView.swift */; };
 		9A0CD6C01D12F92900281ACE /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD6BF1D12F92900281ACE /* UIView+Extensions.swift */; };
 		9A0CD6C21D12F99800281ACE /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD6C11D12F99800281ACE /* KeyboardViewController.swift */; };
+		9A74894A1D18643E00C371DA /* Click.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A7489491D18643E00C371DA /* Click.swift */; };
 		9A910A771D142B3000909040 /* TrackingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A910A761D142B3000909040 /* TrackingView.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 		9A0CD6B91D12F90300281ACE /* KeyboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		9A0CD6BF1D12F92900281ACE /* UIView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		9A0CD6C11D12F99800281ACE /* KeyboardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
+		9A7489491D18643E00C371DA /* Click.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Click.swift; sourceTree = "<group>"; };
 		9A910A761D142B3000909040 /* TrackingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				9A0CD6A01D12F78800281ACE /* Identifiers.swift */,
+				9A7489491D18643E00C371DA /* Click.swift */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 				9A0CD6BC1D12F90300281ACE /* FaceView.swift in Sources */,
 				9A0CD69E1D12F77500281ACE /* Face.swift in Sources */,
 				9A0CD6BA1D12F90300281ACE /* KeyView.swift in Sources */,
+				9A74894A1D18643E00C371DA /* Click.swift in Sources */,
 				9A0CD6A11D12F78800281ACE /* Identifiers.swift in Sources */,
 				9A0CD69C1D12F77500281ACE /* Key.swift in Sources */,
 				9A910A771D142B3000909040 /* TrackingView.swift in Sources */,

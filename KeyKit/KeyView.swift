@@ -10,7 +10,7 @@ import UIKit
 
 public protocol KeyTargetable: class {
     func keyReceivedAction(keyView: KeyView)
-    func key(keyView: KeyView, changeTrackingState tracking: Bool)
+    func key(keyView: KeyView, didChangeTrackingState tracking: Bool)
 }
 
 public class KeyView: UIButton {
@@ -102,15 +102,15 @@ public class KeyView: UIButton {
     //
     @objc private func touchUp(sender: UIButton) {
         self.targetable?.keyReceivedAction(self)
-        self.targetable?.key(self, changeTrackingState: false)
+        self.targetable?.key(self, didChangeTrackingState: false)
     }
     
     @objc private func touchDown(sender: UIButton) {
-        self.targetable?.key(self, changeTrackingState: true)
+        self.targetable?.key(self, didChangeTrackingState: true)
     }
     
     @objc private func touchCancelled(sender: UIButton) {
-        self.targetable?.key(self, changeTrackingState: false)
+        self.targetable?.key(self, didChangeTrackingState: false)
     }
     
     // ----------------------------------
