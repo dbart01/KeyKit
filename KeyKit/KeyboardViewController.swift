@@ -62,7 +62,6 @@ public class KeyboardViewController: UIViewController {
         self.keyboardView.backgroundColor  = UIColor.lightGrayColor()
         
         self.changeFaceTo(Identifier.Letters, inProxy: self.documentProxy)
-        self.updateShiftStateIn(self.documentProxy)
         
         self.view.addSubview(self.keyboardView)
     }
@@ -122,17 +121,6 @@ public class KeyboardViewController: UIViewController {
     private func updateShiftStateIn(proxy: UITextDocumentProxy?) {
         if let proxy = proxy {
             
-            let content = proxy.documentContextBeforeInput ?? ""
-            var enable  = false
-            
-            if content == "" {
-                enable = true
-            } else {
-                enable = content.suffix(2) == ". "
-            }
-            
-            self.setShiftEnabled(enable)
-            
             /* ---------------------------------
              ** Check the shift state and enable
              ** all the keys in case the faces
@@ -140,6 +128,18 @@ public class KeyboardViewController: UIViewController {
              */
             if self.shiftEnabled {
                 self.setShiftEnabled(true)
+                
+            } else {
+                let content = proxy.documentContextBeforeInput ?? ""
+                var enable  = false
+                
+                if content == "" {
+                    enable = true
+                } else {
+                    enable = content.suffix(2) == ". "
+                }
+                
+                self.setShiftEnabled(enable)
             }
         }
     }
@@ -179,8 +179,6 @@ public class KeyboardViewController: UIViewController {
         case .Char(let character):
             self.processInsertion(character, withProxy: self.documentProxy)
         }
-        
-        self.updateShiftStateIn(self.documentProxy)
     }
     
     private func changeFaceTo(identifier: String, inProxy proxy: UITextDocumentProxy?) {
@@ -188,6 +186,7 @@ public class KeyboardViewController: UIViewController {
         self.keyboardView.setFaceView(self.faceViewFor(face))
         
         self.referenceShiftKeys()
+        self.updateShiftStateIn(proxy)
     }
     
     private func processInsertion(character: String, withProxy proxy: UITextDocumentProxy?) {
@@ -242,6 +241,7 @@ public class KeyboardViewController: UIViewController {
             }
         }
         
+        self.updateShiftStateIn(proxy)
         print("\(character)", terminator: "")
     }
     
@@ -250,6 +250,8 @@ public class KeyboardViewController: UIViewController {
         
         self.insertedShortcut  = false
         self.lastInsertedSpace = false
+        
+        self.updateShiftStateIn(proxy)
     }
 }
 
