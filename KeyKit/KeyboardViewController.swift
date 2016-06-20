@@ -20,13 +20,18 @@ public protocol KeyboardDelegate: class {
 public class KeyboardViewController: UIViewController {
     
     public weak var delegate:      KeyboardDelegate?
-    public weak var documentProxy: UITextDocumentProxy?
+    public weak var documentProxy: UITextDocumentProxy? {
+        didSet {
+            self.updateStateForCurrentInsertionPoint()
+        }
+    }
     
     private var keyboardView: KeyboardView!
     private var faces:        [String : Face] = [:]
     
-    private var shiftKeys:    [KeyView] = []
-    private var shiftEnabled: Bool = false
+    private var shiftKeys:       [KeyView] = []
+    private var shiftEnabled:    Bool = false
+    private var capsLockEnabled: Bool = false
 
     // ----------------------------------
     //  MARK: - Init -
@@ -107,11 +112,10 @@ public class KeyboardViewController: UIViewController {
     // ----------------------------------
     //  MARK: - Updates -
     //
-    
-    private func updateForCurrentDocumentProxy() {
-        if let documentProxy = self.documentProxy,
-            let content = documentProxy.documentContextBeforeInput {
+    private func updateStateForCurrentInsertionPoint() {
+        if let documentProxy = self.documentProxy {
             
+            let content = documentProxy.documentContextBeforeInput ?? ""
             if content.characters.count < 1 {
                 self.setShiftEnabled(true)
             }
@@ -126,6 +130,7 @@ public class KeyboardViewController: UIViewController {
         self.keyboardView.setFaceView(self.faceViewFor(face))
         
         self.referenceShiftKeys()
+        self.updateStateForCurrentInsertionPoint()
     }
 }
 
@@ -167,8 +172,19 @@ extension KeyboardViewController: KeyTargetable {
                 text = character.capitalizedString
             }
             self.documentProxy?.insertText(text)
+            
+            /* ---------------------------------
+             ** Disable shift key after each key
+             ** press, unless we're in caps lock
+             ** mode.
+             */
+            if self.shiftEnabled && !self.capsLockEnabled {
+                self.setShiftEnabled(false)
+            }
             print("\(character)", terminator: "")
         }
+        
+        self.updateStateForCurrentInsertionPoint()
     }
     
     public func key(keyView: KeyView, changeTrackingState tracking: Bool) {
