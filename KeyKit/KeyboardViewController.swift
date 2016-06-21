@@ -67,6 +67,17 @@ public class KeyboardViewController: UIViewController {
     }
     
     // ----------------------------------
+    //  MARK: - Text Actions -
+    //
+    public func textWillChange(input: UITextInput?) {
+        
+    }
+    
+    public func textDidChange(input: UITextInput?) {
+        
+    }
+    
+    // ----------------------------------
     //  MARK: - Face Management -
     //
     private func faceFor(identifier: String) -> Face {
@@ -147,6 +158,10 @@ public class KeyboardViewController: UIViewController {
     // ----------------------------------
     //  MARK: - Actions -
     //
+    public func simulate(action: Key.Action) {
+        self.handle(.Action(action), forKey: nil)
+    }
+    
     private func handle(value: Key.Value, forKey key: Key?) {
         if let key = key {
             self.delegate?.keyboardViewController(self, didReceiveInputFrom: key)
