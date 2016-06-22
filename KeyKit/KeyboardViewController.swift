@@ -12,7 +12,6 @@ public protocol KeyboardDelegate: class {
     func keyboardViewControllerDidRequestNextKeyboard(controller: KeyboardViewController)
     
     func keyboardViewController(controller: KeyboardViewController, didReceiveInputFrom key: Key)
-    func keyboardViewController(controller: KeyboardViewController, didInputCharacter character: String)
     func keyboardViewController(controller: KeyboardViewController, didBackspaceLength length: Int)
     
     func keyboardViewControllerDidReturn(controller: KeyboardViewController)
