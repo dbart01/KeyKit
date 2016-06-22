@@ -12,6 +12,9 @@ internal class TrackingView: UIView {
     
     weak var faceView: FaceView?
     
+    var repeatDelay:     Double = 0.7
+    var repeatFrequency: Double = 0.05
+    
     private var touchingKeys = [UITouch: KeyView]()
     private var trackingKeys = Set<KeyView>()
     
@@ -38,6 +41,12 @@ internal class TrackingView: UIView {
             
             if let keyView = self.keyAt(location) where !self.isTracking(keyView) {
                 self.beginTracking(keyView, forTouch: touch)
+                
+                self.after(self.repeatDelay) { [weak self] in
+                    if let strongSelf = self where strongSelf.isTracking(keyView) {
+                        strongSelf.repeatTracking(keyView)
+                    }
+                }
             }
         }
     }
@@ -109,6 +118,16 @@ internal class TrackingView: UIView {
         keyView.sendActionsForControlEvents(.TouchDown)
     }
     
+    private func repeatTracking(keyView: KeyView) {
+        keyView.sendActionsForControlEvents(.TouchDownRepeat)
+        
+        self.after(self.repeatFrequency) { [weak self] in
+            if let strongSelf = self where strongSelf.isTracking(keyView) {
+                strongSelf.repeatTracking(keyView)
+            }
+        }
+    }
+    
     private func endTrackingFor(touch: UITouch, cancelled: Bool = false) {
         if let keyView = self.touchingKeys[touch] {
             self.trackingKeys.remove(keyView)
@@ -138,5 +157,14 @@ internal class TrackingView: UIView {
             }
         }
         return nil
+    }
+    
+    // ----------------------------------
+    //  MARK: - Helpers -
+    //
+    private func after(delay: Double, block: dispatch_block_t) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+            block()
+        }
     }
 }

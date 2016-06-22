@@ -9,6 +9,7 @@
 import UIKit
 
 public protocol KeyTargetable: class {
+    func keyDidRepeat(keyView: KeyView)
     func keyReceivedAction(keyView: KeyView)
     func key(keyView: KeyView, didChangeTrackingState tracking: Bool)
 }
@@ -34,9 +35,10 @@ public class KeyView: UIButton {
         
         super.init(frame: CGRectZero)
         
-        self.addTarget(self, action: #selector(touchUp),        forControlEvents: .TouchUpInside)
-        self.addTarget(self, action: #selector(touchDown),      forControlEvents: .TouchDown)
-        self.addTarget(self, action: #selector(touchCancelled), forControlEvents: .TouchCancel)
+        self.addTarget(self, action: #selector(touchUp),         forControlEvents: .TouchUpInside)
+        self.addTarget(self, action: #selector(touchDown),       forControlEvents: .TouchDown)
+        self.addTarget(self, action: #selector(touchDownRepeat), forControlEvents: .TouchDownRepeat)
+        self.addTarget(self, action: #selector(touchCancelled),  forControlEvents: .TouchCancel)
         
         self.initState()
         self.initLabel()
@@ -108,6 +110,10 @@ public class KeyView: UIButton {
     
     @objc private func touchDown(sender: UIButton) {
         self.targetable?.key(self, didChangeTrackingState: true)
+    }
+    
+    @objc private func touchDownRepeat(sender: UIButton) {
+        self.targetable?.keyDidRepeat(self)
     }
     
     @objc private func touchCancelled(sender: UIButton) {

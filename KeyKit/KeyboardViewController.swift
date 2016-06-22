@@ -279,6 +279,27 @@ extension KeyboardViewController: KeyTargetable {
         self.handle(keyView.key.value, forKey: keyView.key)
     }
     
+    public func keyDidRepeat(keyView: KeyView) {
+        
+        /* ----------------------------------
+         ** Only allow repeating of backspace
+         ** and character values.
+         */
+        switch keyView.key.value {
+        case .Action(let action):
+            
+            switch action {
+            case .Backspace:
+                self.keyReceivedAction(keyView)
+            default:
+                break
+            }
+            
+        case .Char(_):
+            self.keyReceivedAction(keyView)
+        }
+    }
+    
     public func key(keyView: KeyView, didChangeTrackingState tracking: Bool) {
         if tracking {
             Click.play()
