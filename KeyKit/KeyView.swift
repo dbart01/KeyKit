@@ -25,6 +25,7 @@ public class KeyView: UIButton {
     public let key: Key
     
     private weak var targetable: KeyTargetable?
+
     
     // ----------------------------------
     //  MARK: - Init -
@@ -49,20 +50,45 @@ public class KeyView: UIButton {
     }
     
     private func initState() {
+        
+        self.adjustsImageWhenHighlighted = false
+        self.setTitleShadowColor(UIColor.clearColor(), forState: .Normal)
+        
         if let label = self.titleLabel {
-            label.font          = UIFont.systemFontOfSize(18.0)
+            label.font          = UIFont.boldSystemFontOfSize(18.0)
             label.textAlignment = .Center
             label.lineBreakMode = .ByClipping
             label.numberOfLines = 1
         }
         
-        self.tintColor = UIColor.darkGrayColor()
-        self.setTitleColor(self.tintColor,             forState: .Normal)
-        self.setTitleShadowColor(UIColor.clearColor(), forState: .Normal)
+        self.updateIconTintForState()
         
-        self.setBackgroundImage(KeyView.backgroundImage,            forState: .Normal)
-        self.setBackgroundImage(KeyView.highlightedBackgroundImage, forState: .Highlighted)
-        self.setBackgroundImage(KeyView.selectedBackgroundImage,    forState: .Selected)
+        /* ---------------------------------
+         ** Set text color for style
+         */
+        self.setTitleColor(self.titleColorForStyle(self.key.style, state: .Normal),      forState: .Normal)
+        self.setTitleColor(self.titleColorForStyle(self.key.style, state: .Highlighted), forState: .Highlighted)
+        self.setTitleColor(self.titleColorForStyle(self.key.style, state: .Selected),    forState: .Selected)
+        
+        /* ---------------------------------
+         ** Set background image for style
+         */
+        switch self.key.style {
+        case .Main:
+            self.setBackgroundImage(KeyView.mainNormalImage,      forState: .Normal)
+            self.setBackgroundImage(KeyView.mainHighlightedImage, forState: .Highlighted)
+            self.setBackgroundImage(KeyView.mainSelectedImage,    forState: .Selected)
+            
+        case .Alternate:
+            self.setBackgroundImage(KeyView.alternateNormalImage,      forState: .Normal)
+            self.setBackgroundImage(KeyView.alternateHighlightedImage, forState: .Highlighted)
+            self.setBackgroundImage(KeyView.alternateSelectedImage,    forState: .Selected)
+            
+        case .Done:
+            self.setBackgroundImage(KeyView.doneNormalImage,      forState: .Normal)
+            self.setBackgroundImage(KeyView.doneHighlightedImage, forState: .Highlighted)
+            self.setBackgroundImage(KeyView.doneSelectedImage,    forState: .Selected)
+        }
     }
     
     private func initLabel() {
@@ -82,7 +108,36 @@ public class KeyView: UIButton {
     }
     
     // ----------------------------------
-    //  MARK: - State Handling -
+    //  MARK: - State Update -
+    //
+    public override var highlighted: Bool {
+        didSet {
+            self.updateIconTintForState()
+        }
+    }
+    
+    public override var selected: Bool {
+        didSet {
+            self.updateIconTintForState()
+        }
+    }
+    
+    private func updateIconTintForState() {
+        let trackingState: TrackingState
+        
+        if self.state.contains(.Selected) {
+            trackingState = .Selected
+        } else if self.state.contains(.Highlighted) {
+            trackingState = .Highlighted
+        } else {
+            trackingState = .Normal
+        }
+        
+        self.tintColor = self.titleColorForStyle(self.key.style, state: trackingState)
+    }
+    
+    // ----------------------------------
+    //  MARK: - Tracking -
     //
     public func setTrackingState(state: TrackingState) {
         switch state {
@@ -121,23 +176,61 @@ public class KeyView: UIButton {
     }
     
     // ----------------------------------
-    //  MARK: - Drawing -
+    //  MARK: - Title Colors -
     //
-    private static var backgroundImage: UIImage = {
-        return KeyView.drawBackgroudImage(.Normal)
-    }()
+    private func titleColorForStyle(style: Key.Style, state: TrackingState) -> UIColor {
+        switch state {
+        case .Normal:
+            
+            switch style {
+            case .Main:
+                return Color.rgb(r: 121, g: 140, b: 156)
+            case .Alternate:
+                return Color.rgb(r:  50, g: 77,  b:  99)
+            case .Done:
+                return Color.rgb(r: 255, g: 255, b: 255)
+            }
+            
+        case .Selected: fallthrough
+        case .Highlighted:
+            
+            switch style {
+            case .Main:
+                return Color.rgb(r: 121, g: 140, b: 156)
+            case .Alternate:
+                return Color.rgb(r: 255, g: 255, b: 255)
+            case .Done:
+                return Color.rgb(r: 255, g: 255, b: 255)
+            }
+        }
+    }
     
-    private static var highlightedBackgroundImage: UIImage = {
-        return KeyView.drawBackgroudImage(.Highlighted)
-    }()
+    // ----------------------------------
+    //  MARK: - Normal Drawing -
+    //
+    private static var mainNormalImage      = KeyView.drawBackgroudImage(.Main,      state: .Normal)
+    private static var alternateNormalImage = KeyView.drawBackgroudImage(.Alternate, state: .Normal)
+    private static var doneNormalImage      = KeyView.drawBackgroudImage(.Done,      state: .Normal)
     
-    private static var selectedBackgroundImage: UIImage = {
-        return KeyView.drawBackgroudImage(.Selected)
-    }()
+    // ----------------------------------
+    //  MARK: - Highlighted Drawing -
+    //
+    private static var mainHighlightedImage      = KeyView.drawBackgroudImage(.Main,      state: .Highlighted)
+    private static var alternateHighlightedImage = KeyView.drawBackgroudImage(.Alternate, state: .Highlighted)
+    private static var doneHighlightedImage      = KeyView.drawBackgroudImage(.Done,      state: .Highlighted)
     
-    private static func drawBackgroudImage(state: TrackingState) -> UIImage {
+    // ----------------------------------
+    //  MARK: - Selected Drawing -
+    //
+    private static var mainSelectedImage      = KeyView.drawBackgroudImage(.Main,      state: .Selected)
+    private static var alternateSelectedImage = KeyView.drawBackgroudImage(.Alternate, state: .Selected)
+    private static var doneSelectedImage      = KeyView.drawBackgroudImage(.Done,      state: .Selected)
+    
+    // ----------------------------------
+    //  MARK: - Drawing Helper -
+    //
+    private static func drawBackgroudImage(style: Key.Style, state: TrackingState) -> UIImage {
         
-        let offset = CGFloat(1.5)
         let space  = CGFloat(3.0)
         let radius = CGFloat(6.0)
         let line   = 1.0 / UIScreen.mainScreen().scale * 3.0
@@ -150,30 +243,46 @@ public class KeyView: UIButton {
         let path       = UIBezierPath(roundedRect: rect.insetBy(dx: space + line * 0.5, dy: space + line * 0.5), cornerRadius: radius)
         path.lineWidth = line
         
+        /* ---------------------------------
+         ** Determine the color for this key
+         ** style and state.
+         */
+        let color: UIColor
         switch state {
         case .Normal:
-            path.applyTransform(CGAffineTransformMakeTranslation(0.0, offset))
-            UIColor.darkGrayColor().setFill()
-            path.fill()
             
-            path.applyTransform(CGAffineTransformMakeTranslation(0.0, -offset))
-            UIColor.whiteColor().setFill()
-            path.fill()
+            switch style {
+            case .Main:
+                color = Color.rgb(r: 255, g: 255, b: 255)
+            case .Alternate:
+                color = Color.rgb(r: 196, g: 204, b: 211)
+            case .Done:
+                color = Color.rgb(r:  70, g: 183, b: 204)
+            }
             
+        case .Selected: fallthrough
         case .Highlighted:
-            path.applyTransform(CGAffineTransformMakeTranslation(0.0, offset))
-            UIColor.whiteColor().setFill()
-            path.fill()
             
-        case .Selected:
-            path.applyTransform(CGAffineTransformMakeTranslation(0.0, offset))
-            UIColor(white: 0.8, alpha: 1.0).setFill()
-            path.fill()
+            switch style {
+            case .Main:
+                color = Color.rgb(r: 235, g: 235, b: 235)
+            case .Alternate:
+                color = Color.rgb(r:  70, g: 183, b: 204)//Color.rgb(r: 171, g: 180, b: 187)
+            case .Done:
+                color = Color.rgb(r:  48, g: 147, b: 166)
+            }
         }
+        
+        /* ---------------------------------
+         ** Set and fill the key with color
+         */
+        color.setFill()
+        path.fill()
         
         let inset = space + radius + line * 2.0
         let image = UIGraphicsGetImageFromCurrentImageContext().resizableImageWithCapInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
         UIGraphicsEndImageContext()
+        
         return image
     }
 }

@@ -58,7 +58,7 @@ public class KeyboardViewController: UIViewController {
         self.keyboardView                  = KeyboardView(faceView: nil)
         self.keyboardView.frame            = self.view.bounds
         self.keyboardView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-        self.keyboardView.backgroundColor  = UIColor.lightGrayColor()
+        self.keyboardView.backgroundColor  = Color.rgb(r: 237, g: 240, b: 242)
         
         self.changeFaceTo(Identifier.Letters, inProxy: self.documentProxy)
         

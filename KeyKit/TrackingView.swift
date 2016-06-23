@@ -12,7 +12,7 @@ internal class TrackingView: UIView {
     
     weak var faceView: FaceView?
     
-    var repeatDelay:     Double = 0.7
+    var repeatDelay:     Double = 0.3
     var repeatFrequency: Double = 0.05
     
     private var touchingKeys = [UITouch: KeyView]()
