@@ -8,6 +8,8 @@
 
 import Foundation
 
+public protocol KeyActionType {}
+
 public struct Key: Equatable {
     
     public enum Label: Equatable {
@@ -21,6 +23,7 @@ public struct Key: Equatable {
         case Backspace
         case Return
         case Globe
+        case Custom(KeyActionType)
     }
     
     public enum Value: Equatable {

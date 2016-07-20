@@ -12,6 +12,7 @@ public protocol KeyboardDelegate: class {
     func keyboardViewControllerDidRequestNextKeyboard(controller: KeyboardViewController)
     
     func keyboardViewController(controller: KeyboardViewController, didReceiveInputFrom key: Key)
+    func keyboardViewController(controller: KeyboardViewController, didReceiveCustomAction action: KeyActionType)
     func keyboardViewController(controller: KeyboardViewController, didBackspaceLength length: Int)
     
     func keyboardViewControllerDidReturn(controller: KeyboardViewController)
@@ -26,11 +27,13 @@ public class KeyboardViewController: UIViewController {
         }
     }
     
+    public private(set) var faces       = [String : Face]()
+    public private(set) var initialFace = "null"
+    
     public var usePeriodShortcut = true
     public var allowCapsLock     = false
     
     private var keyboardView: KeyboardView!
-    private var faces:        [String : Face] = [:]
     
     private var shiftKeys:         [KeyView] = []
     private var shiftEnabled:      Bool = false
@@ -60,9 +63,17 @@ public class KeyboardViewController: UIViewController {
         self.keyboardView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         self.keyboardView.backgroundColor  = Color.rgb(r: 237, g: 240, b: 242)
         
-        self.changeFaceTo(Identifier.Letters, inProxy: self.documentProxy)
+        self.changeFaceTo(self.initialFace, inProxy: self.documentProxy)
         
         self.view.addSubview(self.keyboardView)
+    }
+    
+    // ----------------------------------
+    //  MARK: - Setters -
+    //
+    public func setFaces(faces: [String: Face], initialFace: String) {
+        self.faces       = faces
+        self.initialFace = initialFace
     }
     
     // ----------------------------------
@@ -82,23 +93,8 @@ public class KeyboardViewController: UIViewController {
     private func faceFor(identifier: String) -> Face {
         if let face = self.faces[identifier] {
             return face
-            
         } else {
-            
-            let face: Face
-            switch identifier {
-            case Identifier.Letters:
-                face = Face.lettersFace()
-            case Identifier.Numbers:
-                face = Face.numbersFace()
-            case Identifier.Characters:
-                face = Face.charactersFace()
-            default:
-                fatalError("Unable to create face with identifier: \(identifier)")
-            }
-            
-            self.faces[identifier] = face
-            return face
+            fatalError("Could not load face. Face for identifier: \(identifier) cannot be found.")
         }
     }
     
@@ -161,6 +157,14 @@ public class KeyboardViewController: UIViewController {
         self.handle(.Action(action), forKey: nil)
     }
     
+    public func changeFaceTo(identifier: String, inProxy proxy: UITextDocumentProxy?) {
+        let face = self.faceFor(identifier)
+        self.keyboardView.setFaceView(self.faceViewFor(face))
+        
+        self.referenceShiftKeys()
+        self.updateShiftStateIn(proxy)
+    }
+    
     private func handle(value: Key.Value, forKey key: Key?) {
         if let key = key {
             self.delegate?.keyboardViewController(self, didReceiveInputFrom: key)
@@ -188,19 +192,14 @@ public class KeyboardViewController: UIViewController {
             case .Return:
                 self.handle(.Char("\n"), forKey: nil)
                 self.delegate?.keyboardViewControllerDidReturn(self)
+                
+            case .Custom(let action):
+                self.delegate?.keyboardViewController(self, didReceiveCustomAction: action)
             }
             
         case .Char(let character):
             self.processInsertion(character, withProxy: self.documentProxy)
         }
-    }
-    
-    private func changeFaceTo(identifier: String, inProxy proxy: UITextDocumentProxy?) {
-        let face = self.faceFor(identifier)
-        self.keyboardView.setFaceView(self.faceViewFor(face))
-        
-        self.referenceShiftKeys()
-        self.updateShiftStateIn(proxy)
     }
     
     private func processInsertion(character: String, withProxy proxy: UITextDocumentProxy?) {
@@ -243,14 +242,6 @@ public class KeyboardViewController: UIViewController {
                  */
                 if self.shiftEnabled && !self.capsLockEnabled {
                     self.handle(.Action(.Shift), forKey: nil)
-                }
-                
-                /* -----------------------------------
-                 ** Return to keyboard if the inserted
-                 ** char is an apostrophe.
-                 */
-                if text == "'" {
-                    self.handle(.Action(.ChangeFace(Identifier.Letters)), forKey: nil)
                 }
             }
         }
