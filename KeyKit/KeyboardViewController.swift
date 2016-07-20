@@ -8,11 +8,14 @@
 
 import UIKit
 
-public protocol KeyboardDelegate: class {
+public protocol KeyboardActionDelegate: class {
+    func keyboardViewController(controller: KeyboardViewController, didReceiveCustomAction action: KeyActionType)
+}
+
+public protocol KeyboardDelegate: KeyboardActionDelegate {
     func keyboardViewControllerDidRequestNextKeyboard(controller: KeyboardViewController)
     
     func keyboardViewController(controller: KeyboardViewController, didReceiveInputFrom key: Key)
-    func keyboardViewController(controller: KeyboardViewController, didReceiveCustomAction action: KeyActionType)
     func keyboardViewController(controller: KeyboardViewController, didBackspaceLength length: Int)
     
     func keyboardViewControllerDidReturn(controller: KeyboardViewController)
