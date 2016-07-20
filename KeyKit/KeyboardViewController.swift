@@ -8,11 +8,11 @@
 
 import UIKit
 
-public protocol KeyboardActionDelegate: class {
+public protocol KeyboardCustomActionDelegate: class {
     func keyboardViewController(controller: KeyboardViewController, didReceiveCustomAction action: KeyActionType)
 }
 
-public protocol KeyboardDelegate: KeyboardActionDelegate {
+public protocol KeyboardDelegate: KeyboardCustomActionDelegate {
     func keyboardViewControllerDidRequestNextKeyboard(controller: KeyboardViewController)
     
     func keyboardViewController(controller: KeyboardViewController, didReceiveInputFrom key: Key)
