@@ -30,9 +30,6 @@ public class KeyboardViewController: UIViewController {
         }
     }
     
-    public private(set) var faces       = [String : Face]()
-    public private(set) var initialFace = "null"
-    
     public var usePeriodShortcut = true
     public var allowCapsLock     = false
     
@@ -43,11 +40,18 @@ public class KeyboardViewController: UIViewController {
     private var capsLockEnabled:   Bool = false
     private var lastInsertedSpace: Bool = false
     private var insertedShortcut:  Bool = false
+    
+    private let faces: [String : Face]
+    private let initialFaceIdentifier: String
 
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init() {
+    public init(faces: [Face], initialFaceIdentifier: String) {
+        
+        self.faces                 = faces.dictionaryByIdentifier
+        self.initialFaceIdentifier = initialFaceIdentifier
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -66,17 +70,9 @@ public class KeyboardViewController: UIViewController {
         self.keyboardView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         self.keyboardView.backgroundColor  = Color.rgb(r: 237, g: 240, b: 242)
         
-        self.changeFaceTo(self.initialFace, inProxy: self.documentProxy)
+        self.changeFaceTo(self.initialFaceIdentifier, inProxy: self.documentProxy)
         
         self.view.addSubview(self.keyboardView)
-    }
-    
-    // ----------------------------------
-    //  MARK: - Setters -
-    //
-    public func setFaces(faces: [String: Face], initialFace: String) {
-        self.faces       = faces
-        self.initialFace = initialFace
     }
     
     // ----------------------------------

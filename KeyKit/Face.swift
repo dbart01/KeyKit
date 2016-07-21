@@ -45,3 +45,14 @@ public struct Face {
     }
 }
 
+extension CollectionType where Generator.Element == Face {
+    
+    var dictionaryByIdentifier: [String : Face] {
+        var container = [String : Face]()
+        for face in self {
+            container[face.identifier] = face
+        }
+        return container
+    }
+}
+
