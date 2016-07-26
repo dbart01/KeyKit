@@ -14,7 +14,7 @@ public protocol KeyTargetable: class {
     func key(keyView: KeyView, didChangeTrackingState tracking: Bool)
 }
 
-public class KeyView: UIButton {
+public class KeyView: TintedButton {
 
     public enum TrackingState {
         case Normal
@@ -25,7 +25,54 @@ public class KeyView: UIButton {
     public let key: Key
     
     private weak var targetable: KeyTargetable?
-
+    
+    // ----------------------------------
+    //  MARK: - Default Styles -
+    //
+    public override static func initialize() {
+        let proxy = KeyView.appearance()
+        
+        let dark  = Color.rgb(r:  50, g: 77,  b:  99)
+        let light = Color.rgb(r: 121, g: 140, b: 156)
+        let alt   = Color.rgb(r: 255, g: 255, b: 255)
+        
+        proxy.setTextColor(light, forStyle: .Main,      state: .Normal)
+        proxy.setTextColor(dark,  forStyle: .Alternate, state: .Normal)
+        proxy.setTextColor(alt,   forStyle: .Done,      state: .Normal)
+        
+        proxy.setTextColor(light, forStyle: .Main,      state: .Highlighted)
+        proxy.setTextColor(alt,   forStyle: .Alternate, state: .Highlighted)
+        proxy.setTextColor(alt,   forStyle: .Done,      state: .Highlighted)
+        
+        proxy.setTextColor(light, forStyle: .Main,      state: .Selected)
+        proxy.setTextColor(alt,   forStyle: .Alternate, state: .Selected)
+        proxy.setTextColor(alt,   forStyle: .Done,      state: .Selected)
+    }
+    
+    // ----------------------------------
+    //  MARK: - UIAppearance -
+    //
+    public dynamic var textFont: UIFont? {
+        get {
+            return self.titleLabel?.font
+        }
+        set {
+            self.titleLabel?.font = newValue
+        }
+    }
+    
+    public dynamic func setTextColor(color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+        if self.key.style == style {
+            self.setTitleColor(color, forState: state)
+        }
+    }
+    
+    public dynamic func textColorForStyle(style: KeyStyle, state: UIControlState) -> UIColor? {
+        if self.key.style == style {
+            return self.titleColorForState(state)
+        }
+        return nil
+    }
     
     // ----------------------------------
     //  MARK: - Init -
@@ -55,20 +102,12 @@ public class KeyView: UIButton {
         self.setTitleShadowColor(UIColor.clearColor(), forState: .Normal)
         
         if let label = self.titleLabel {
-            label.font          = UIFont.boldSystemFontOfSize(18.0)
             label.textAlignment = .Center
             label.lineBreakMode = .ByClipping
             label.numberOfLines = 1
+        } else {
+            fatalError("Failed to configure KeyView label style. No titleLabel found.")
         }
-        
-        self.updateIconTintForState()
-        
-        /* ---------------------------------
-         ** Set text color for style
-         */
-        self.setTitleColor(self.titleColorForStyle(self.key.style, state: .Normal),      forState: .Normal)
-        self.setTitleColor(self.titleColorForStyle(self.key.style, state: .Highlighted), forState: .Highlighted)
-        self.setTitleColor(self.titleColorForStyle(self.key.style, state: .Selected),    forState: .Selected)
         
         /* ---------------------------------
          ** Set background image for style
@@ -105,35 +144,6 @@ public class KeyView: UIButton {
                 fatalError("KeyView failed to find image named: \(imageName).")
             }
         }
-    }
-    
-    // ----------------------------------
-    //  MARK: - State Update -
-    //
-    public override var highlighted: Bool {
-        didSet {
-            self.updateIconTintForState()
-        }
-    }
-    
-    public override var selected: Bool {
-        didSet {
-            self.updateIconTintForState()
-        }
-    }
-    
-    private func updateIconTintForState() {
-        let trackingState: TrackingState
-        
-        if self.state.contains(.Selected) {
-            trackingState = .Selected
-        } else if self.state.contains(.Highlighted) {
-            trackingState = .Highlighted
-        } else {
-            trackingState = .Normal
-        }
-        
-        self.tintColor = self.titleColorForStyle(self.key.style, state: trackingState)
     }
     
     // ----------------------------------
@@ -176,36 +186,6 @@ public class KeyView: UIButton {
     }
     
     // ----------------------------------
-    //  MARK: - Title Colors -
-    //
-    private func titleColorForStyle(style: Key.Style, state: TrackingState) -> UIColor {
-        switch state {
-        case .Normal:
-            
-            switch style {
-            case .Main:
-                return Color.rgb(r: 121, g: 140, b: 156)
-            case .Alternate:
-                return Color.rgb(r:  50, g: 77,  b:  99)
-            case .Done:
-                return Color.rgb(r: 255, g: 255, b: 255)
-            }
-            
-        case .Selected: fallthrough
-        case .Highlighted:
-            
-            switch style {
-            case .Main:
-                return Color.rgb(r: 121, g: 140, b: 156)
-            case .Alternate:
-                return Color.rgb(r: 255, g: 255, b: 255)
-            case .Done:
-                return Color.rgb(r: 255, g: 255, b: 255)
-            }
-        }
-    }
-    
-    // ----------------------------------
     //  MARK: - Normal Drawing -
     //
     private static var mainNormalImage      = KeyView.drawBackgroudImage(.Main,      state: .Normal)
@@ -229,7 +209,7 @@ public class KeyView: UIButton {
     // ----------------------------------
     //  MARK: - Drawing Helper -
     //
-    private static func drawBackgroudImage(style: Key.Style, state: TrackingState) -> UIImage {
+    private static func drawBackgroudImage(style: KeyStyle, state: TrackingState) -> UIImage {
         
         let space  = CGFloat(3.0)
         let radius = CGFloat(6.0)

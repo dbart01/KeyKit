@@ -58,7 +58,7 @@ public class RowView: UIView {
          ** style key, we'll pin it to edge.
          */
         let leftKey  = keyViews.first!
-        let pinLeft  = leftKey.key.style == Key.Style.Alternate
+        let pinLeft  = leftKey.key.style == .Alternate
         if pinLeft {
             let keyWidth = keyWidths.removeFirst()
             keyViews.removeFirst()
@@ -72,7 +72,7 @@ public class RowView: UIView {
          ** style key, we'll pin it to edge.
          */
         let rightKey = keyViews.last!
-        let pinRight = rightKey.key.style  == Key.Style.Alternate
+        let pinRight = rightKey.key.style  == .Alternate
         if pinRight {
             let keyWidth = keyWidths.removeLast()
             keyViews.removeLast()

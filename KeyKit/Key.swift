@@ -10,6 +10,12 @@ import Foundation
 
 public protocol KeyActionType {}
 
+@objc public enum KeyStyle: Int {
+    case Main
+    case Alternate
+    case Done
+}
+
 public struct Key: Equatable {
     
     public enum Label: Equatable {
@@ -31,21 +37,15 @@ public struct Key: Equatable {
         case Char(String)
     }
     
-    public enum Style {
-        case Main
-        case Alternate
-        case Done
-    }
-    
     public let label:  Label
     public let value:  Value
     public let length: Double
-    public let style:  Style
+    public let style:  KeyStyle
     
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(label: Label, value: Value, length: Double, style: Style = .Main) {
+    public init(label: Label, value: Value, length: Double, style: KeyStyle = .Main) {
         self.label  = label
         self.value  = value
         self.length = length
@@ -56,7 +56,7 @@ public struct Key: Equatable {
         self.init(label: .Char(label), value: .Char(char), length: length)
     }
     
-    public init(label: String, action: Key.Action, length: Double, style: Style = .Main) {
+    public init(label: String, action: Key.Action, length: Double, style: KeyStyle = .Main) {
         self.init(label: .Char(label), value: .Action(action), length: length, style: style)
     }
     
