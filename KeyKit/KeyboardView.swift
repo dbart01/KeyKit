@@ -19,6 +19,26 @@ public class KeyboardView: UIView {
     private var trackingView: TrackingView!
     
     // ----------------------------------
+    //  MARK: - Default Styles -
+    //
+    public override static func initialize() {
+        let proxy = KeyboardView.appearance()
+        
+        proxy.setKeyboardColor(Color.rgb(r: 237, g: 240, b: 242))
+    }
+    
+    // ----------------------------------
+    //  MARK: - UIAppearance -
+    //
+    public dynamic func setKeyboardColor(color: UIColor) {
+        self.backgroundColor = color
+    }
+    
+    public dynamic func keyboardColor() -> UIColor? {
+        return self.backgroundColor
+    }
+    
+    // ----------------------------------
     //  MARK: - Init -
     //
     public init(faceView: FaceView?) {
