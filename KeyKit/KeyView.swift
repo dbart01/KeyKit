@@ -33,6 +33,14 @@ public class KeyView: TintedButton {
     public override static func initialize() {
         let proxy = KeyView.appearance()
         
+        // Key fonts
+        
+        let font = UIFont.systemFontOfSize(18.0)
+        
+        proxy.setTextFont(font, forStyle: .Main)
+        proxy.setTextFont(font, forStyle: .Alternate)
+        proxy.setTextFont(font, forStyle: .Done)
+        
         // Key colors
         
         let textDark  = Color.rgb(r:  50, g: 77,  b:  99)
@@ -69,13 +77,17 @@ public class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - UIAppearance -
     //
-    public dynamic var textFont: UIFont? {
-        get {
+    public dynamic func setTextFont(font: UIFont, forStyle style: KeyStyle) {
+        if self.key.style == style {
+            self.titleLabel?.font = font
+        }
+    }
+    
+    public dynamic func textFontForStyle(style: KeyStyle) -> UIFont? {
+        if self.key.style == style {
             return self.titleLabel?.font
         }
-        set {
-            self.titleLabel?.font = newValue
-        }
+        return nil
     }
     
     public dynamic func setTextColor(color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
