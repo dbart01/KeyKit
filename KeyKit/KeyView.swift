@@ -25,6 +25,7 @@ public class KeyView: TintedButton {
     public let key: Key
     
     private weak var targetable: KeyTargetable?
+    private var keyColors = [String : UIColor]()
     
     // ----------------------------------
     //  MARK: - Default Styles -
@@ -32,21 +33,37 @@ public class KeyView: TintedButton {
     public override static func initialize() {
         let proxy = KeyView.appearance()
         
-        let dark  = Color.rgb(r:  50, g: 77,  b:  99)
-        let light = Color.rgb(r: 121, g: 140, b: 156)
-        let alt   = Color.rgb(r: 255, g: 255, b: 255)
+        // Key colors
         
-        proxy.setTextColor(light, forStyle: .Main,      state: .Normal)
-        proxy.setTextColor(dark,  forStyle: .Alternate, state: .Normal)
-        proxy.setTextColor(alt,   forStyle: .Done,      state: .Normal)
+        let textDark  = Color.rgb(r:  50, g: 77,  b:  99)
+        let textLight = Color.rgb(r: 121, g: 140, b: 156)
+        let textAlt   = Color.rgb(r: 255, g: 255, b: 255)
         
-        proxy.setTextColor(light, forStyle: .Main,      state: .Highlighted)
-        proxy.setTextColor(alt,   forStyle: .Alternate, state: .Highlighted)
-        proxy.setTextColor(alt,   forStyle: .Done,      state: .Highlighted)
+        proxy.setTextColor(textLight, forStyle: .Main,      state: .Normal)
+        proxy.setTextColor(textDark,  forStyle: .Alternate, state: .Normal)
+        proxy.setTextColor(textAlt,   forStyle: .Done,      state: .Normal)
         
-        proxy.setTextColor(light, forStyle: .Main,      state: .Selected)
-        proxy.setTextColor(alt,   forStyle: .Alternate, state: .Selected)
-        proxy.setTextColor(alt,   forStyle: .Done,      state: .Selected)
+        proxy.setTextColor(textLight, forStyle: .Main,      state: .Highlighted)
+        proxy.setTextColor(textAlt,   forStyle: .Alternate, state: .Highlighted)
+        proxy.setTextColor(textAlt,   forStyle: .Done,      state: .Highlighted)
+        
+        proxy.setTextColor(textLight, forStyle: .Main,      state: .Selected)
+        proxy.setTextColor(textAlt,   forStyle: .Alternate, state: .Selected)
+        proxy.setTextColor(textAlt,   forStyle: .Done,      state: .Selected)
+        
+        // Key Backgrounds
+        
+        proxy.setKeyColor(Color.rgb(r: 255, g: 255, b: 255), forStyle: .Main,      state: .Normal)
+        proxy.setKeyColor(Color.rgb(r: 196, g: 204, b: 211), forStyle: .Alternate, state: .Normal)
+        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .Done,      state: .Normal)
+        
+        proxy.setKeyColor(Color.rgb(r: 235, g: 235, b: 235), forStyle: .Main,      state: .Highlighted)
+        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .Alternate, state: .Highlighted)
+        proxy.setKeyColor(Color.rgb(r:  48, g: 147, b: 166), forStyle: .Done,      state: .Highlighted)
+        
+        proxy.setKeyColor(Color.rgb(r: 235, g: 235, b: 235), forStyle: .Main,      state: .Selected)
+        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .Alternate, state: .Selected)
+        proxy.setKeyColor(Color.rgb(r:  48, g: 147, b: 166), forStyle: .Done,      state: .Selected)
     }
     
     // ----------------------------------
@@ -70,6 +87,20 @@ public class KeyView: TintedButton {
     public dynamic func textColorForStyle(style: KeyStyle, state: UIControlState) -> UIColor? {
         if self.key.style == style {
             return self.titleColorForState(state)
+        }
+        return nil
+    }
+    
+    public dynamic func setKeyColor(color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+        if self.key.style == style {
+            self.keyColors[state.key] = color
+            self.setBackgroundImage(KeyBackground.imageForColor(color), forState: state)
+        }
+    }
+    
+    public dynamic func keyColorForStyle(style: KeyStyle, state: UIControlState) -> UIColor? {
+        if self.key.style == style {
+            return self.keyColors[state.key]
         }
         return nil
     }
@@ -107,26 +138,6 @@ public class KeyView: TintedButton {
             label.numberOfLines = 1
         } else {
             fatalError("Failed to configure KeyView label style. No titleLabel found.")
-        }
-        
-        /* ---------------------------------
-         ** Set background image for style
-         */
-        switch self.key.style {
-        case .Main:
-            self.setBackgroundImage(KeyView.mainNormalImage,      forState: .Normal)
-            self.setBackgroundImage(KeyView.mainHighlightedImage, forState: .Highlighted)
-            self.setBackgroundImage(KeyView.mainSelectedImage,    forState: .Selected)
-            
-        case .Alternate:
-            self.setBackgroundImage(KeyView.alternateNormalImage,      forState: .Normal)
-            self.setBackgroundImage(KeyView.alternateHighlightedImage, forState: .Highlighted)
-            self.setBackgroundImage(KeyView.alternateSelectedImage,    forState: .Selected)
-            
-        case .Done:
-            self.setBackgroundImage(KeyView.doneNormalImage,      forState: .Normal)
-            self.setBackgroundImage(KeyView.doneHighlightedImage, forState: .Highlighted)
-            self.setBackgroundImage(KeyView.doneSelectedImage,    forState: .Selected)
         }
     }
     
@@ -184,32 +195,29 @@ public class KeyView: TintedButton {
     @objc private func touchCancelled(sender: UIButton) {
         self.targetable?.key(self, didChangeTrackingState: false)
     }
+}
+
+// ------------------------------------
+//  MARK: - KeyBackground Rendering -
+//
+private struct KeyBackground {
     
-    // ----------------------------------
-    //  MARK: - Normal Drawing -
-    //
-    private static var mainNormalImage      = KeyView.drawBackgroudImage(.Main,      state: .Normal)
-    private static var alternateNormalImage = KeyView.drawBackgroudImage(.Alternate, state: .Normal)
-    private static var doneNormalImage      = KeyView.drawBackgroudImage(.Done,      state: .Normal)
+    private static var images = [String : UIImage]()
     
-    // ----------------------------------
-    //  MARK: - Highlighted Drawing -
-    //
-    private static var mainHighlightedImage      = KeyView.drawBackgroudImage(.Main,      state: .Highlighted)
-    private static var alternateHighlightedImage = KeyView.drawBackgroudImage(.Alternate, state: .Highlighted)
-    private static var doneHighlightedImage      = KeyView.drawBackgroudImage(.Done,      state: .Highlighted)
+    private static func imageForColor(color: UIColor) -> UIImage {
+        let colorKey = color.key
+        if let image = self.images[colorKey] {
+            return image
+            
+        } else {
+            let image             = self.drawBackgroudImageWith(color)
+            self.images[colorKey] = image
+            
+            return image
+        }
+    }
     
-    // ----------------------------------
-    //  MARK: - Selected Drawing -
-    //
-    private static var mainSelectedImage      = KeyView.drawBackgroudImage(.Main,      state: .Selected)
-    private static var alternateSelectedImage = KeyView.drawBackgroudImage(.Alternate, state: .Selected)
-    private static var doneSelectedImage      = KeyView.drawBackgroudImage(.Done,      state: .Selected)
-    
-    // ----------------------------------
-    //  MARK: - Drawing Helper -
-    //
-    private static func drawBackgroudImage(style: KeyStyle, state: TrackingState) -> UIImage {
+    private static func drawBackgroudImageWith(color: UIColor) -> UIImage {
         
         let space  = CGFloat(3.0)
         let radius = CGFloat(6.0)
@@ -223,39 +231,6 @@ public class KeyView: TintedButton {
         let path       = UIBezierPath(roundedRect: rect.insetBy(dx: space + line * 0.5, dy: space + line * 0.5), cornerRadius: radius)
         path.lineWidth = line
         
-        /* ---------------------------------
-         ** Determine the color for this key
-         ** style and state.
-         */
-        let color: UIColor
-        switch state {
-        case .Normal:
-            
-            switch style {
-            case .Main:
-                color = Color.rgb(r: 255, g: 255, b: 255)
-            case .Alternate:
-                color = Color.rgb(r: 196, g: 204, b: 211)
-            case .Done:
-                color = Color.rgb(r:  70, g: 183, b: 204)
-            }
-            
-        case .Selected: fallthrough
-        case .Highlighted:
-            
-            switch style {
-            case .Main:
-                color = Color.rgb(r: 235, g: 235, b: 235)
-            case .Alternate:
-                color = Color.rgb(r:  70, g: 183, b: 204)//Color.rgb(r: 171, g: 180, b: 187)
-            case .Done:
-                color = Color.rgb(r:  48, g: 147, b: 166)
-            }
-        }
-        
-        /* ---------------------------------
-         ** Set and fill the key with color
-         */
         color.setFill()
         path.fill()
         
@@ -264,5 +239,34 @@ public class KeyView: TintedButton {
         UIGraphicsEndImageContext()
         
         return image
+    }
+}
+
+// ----------------------------------
+//  MARK: - UIControlState -
+//
+extension UIControlState {
+    var key: String {
+        return String(self.rawValue)
+    }
+}
+
+// ----------------------------------
+//  MARK: - UIColor -
+//
+extension UIColor {
+    var key: String {
+        let color      = self.CGColor
+        let count      = CGColorGetNumberOfComponents(color)
+        let components = CGColorGetComponents(color)
+        
+        var values = [String]()
+        for i in 0..<count {
+            let component = (components + i).memory
+            let rounded   = Int(component * 100.0)
+            values.append("\(rounded)")
+        }
+        
+        return values.joinWithSeparator(",")
     }
 }
