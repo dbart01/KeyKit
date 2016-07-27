@@ -293,9 +293,13 @@ extension KeyboardViewController: KeyTargetable {
         }
     }
     
-    public func key(keyView: KeyView, didChangeTrackingState tracking: Bool) {
+    public func key(keyView: KeyView, didChangeTrackingState tracking: Bool, draggedIn: Bool?) {
         if tracking {
-            Click.play()
+            if let draggedIn = draggedIn where draggedIn {
+                // Don't click
+            } else {
+                Click.play()
+            }
         }
     }
 }

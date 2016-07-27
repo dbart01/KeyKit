@@ -11,7 +11,7 @@ import UIKit
 public protocol KeyTargetable: class {
     func keyDidRepeat(keyView: KeyView)
     func keyReceivedAction(keyView: KeyView)
-    func key(keyView: KeyView, didChangeTrackingState tracking: Bool)
+    func key(keyView: KeyView, didChangeTrackingState tracking: Bool, draggedIn: Bool?)
 }
 
 public class KeyView: TintedButton {
@@ -128,6 +128,7 @@ public class KeyView: TintedButton {
         
         self.addTarget(self, action: #selector(touchUp),         forControlEvents: .TouchUpInside)
         self.addTarget(self, action: #selector(touchDown),       forControlEvents: .TouchDown)
+        self.addTarget(self, action: #selector(dragIn),          forControlEvents: .TouchDragInside)
         self.addTarget(self, action: #selector(touchDownRepeat), forControlEvents: .TouchDownRepeat)
         self.addTarget(self, action: #selector(touchCancelled),  forControlEvents: .TouchCancel)
         
@@ -193,11 +194,15 @@ public class KeyView: TintedButton {
     //
     @objc private func touchUp(sender: UIButton) {
         self.targetable?.keyReceivedAction(self)
-        self.targetable?.key(self, didChangeTrackingState: false)
+        self.targetable?.key(self, didChangeTrackingState: false, draggedIn: nil)
     }
     
     @objc private func touchDown(sender: UIButton) {
-        self.targetable?.key(self, didChangeTrackingState: true)
+        self.targetable?.key(self, didChangeTrackingState: true, draggedIn: false)
+    }
+    
+    @objc private func dragIn(sender: UIButton) {
+        self.targetable?.key(self, didChangeTrackingState: true, draggedIn: true)
     }
     
     @objc private func touchDownRepeat(sender: UIButton) {
@@ -205,7 +210,7 @@ public class KeyView: TintedButton {
     }
     
     @objc private func touchCancelled(sender: UIButton) {
-        self.targetable?.key(self, didChangeTrackingState: false)
+        self.targetable?.key(self, didChangeTrackingState: false, draggedIn: false)
     }
 }
 

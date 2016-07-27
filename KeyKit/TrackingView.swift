@@ -40,7 +40,7 @@ internal class TrackingView: UIView {
             let location = touch.locationInView(faceView)
             
             if let keyView = self.keyAt(location) where !self.isTracking(keyView) {
-                self.beginTracking(keyView, forTouch: touch)
+                self.beginTracking(keyView, forTouch: touch, draggedIn: false)
                 
                 self.after(self.repeatDelay) { [weak self, touch] in
                     if let strongSelf = self where strongSelf.isTracking(keyView) && touch.window != nil {
@@ -71,7 +71,7 @@ internal class TrackingView: UIView {
                 let currentTrackingKey = self.trackingKeyFor(touch)
                 if currentTrackingKey != keyView {
                     self.endTrackingFor(touch, cancelled: true)
-                    self.beginTracking(keyView, forTouch: touch)
+                    self.beginTracking(keyView, forTouch: touch, draggedIn: true)
                 }
                 
             } else {
@@ -109,13 +109,17 @@ internal class TrackingView: UIView {
         return self.touchingKeys[touch]
     }
     
-    private func beginTracking(keyView: KeyView, forTouch touch: UITouch) {
+    private func beginTracking(keyView: KeyView, forTouch touch: UITouch, draggedIn: Bool) {
         self.touchingKeys[touch] = keyView
         self.trackingKeys.insert(keyView)
         
         keyView.setTrackingState(.Highlighted)
         
-        keyView.sendActionsForControlEvents(.TouchDown)
+        if draggedIn {
+            keyView.sendActionsForControlEvents(.TouchDragEnter)
+        } else {
+            keyView.sendActionsForControlEvents(.TouchDown)
+        }
     }
     
     private func repeatTracking(keyView: KeyView) {
