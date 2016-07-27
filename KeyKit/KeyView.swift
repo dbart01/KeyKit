@@ -22,7 +22,13 @@ public class KeyView: TintedButton {
         case Selected
     }
     
+    private(set) var isDown      = false
+    private(set) var isRepeating = false
+    
     public let key: Key
+    
+    public var repeatDelay:     Double = 0.3
+    public var repeatFrequency: Double = 0.85
     
     private weak var targetable: KeyTargetable?
     private var keyColors = [String : UIColor]()
@@ -126,11 +132,10 @@ public class KeyView: TintedButton {
         
         super.init(frame: CGRectZero)
         
-        self.addTarget(self, action: #selector(touchUp),         forControlEvents: .TouchUpInside)
-        self.addTarget(self, action: #selector(touchDown),       forControlEvents: .TouchDown)
-        self.addTarget(self, action: #selector(dragIn),          forControlEvents: .TouchDragInside)
-        self.addTarget(self, action: #selector(touchDownRepeat), forControlEvents: .TouchDownRepeat)
-        self.addTarget(self, action: #selector(touchCancelled),  forControlEvents: .TouchCancel)
+        self.addTarget(self, action: #selector(touchUp),        forControlEvents: .TouchUpInside)
+        self.addTarget(self, action: #selector(touchDown),      forControlEvents: .TouchDown)
+        self.addTarget(self, action: #selector(dragIn),         forControlEvents: .TouchDragInside)
+        self.addTarget(self, action: #selector(touchCancelled), forControlEvents: .TouchCancel)
         
         self.initState()
         self.initLabel()
@@ -190,18 +195,43 @@ public class KeyView: TintedButton {
     }
     
     // ----------------------------------
+    //  MARK: - Repetition -
+    //
+    private func enqueueRepeatDelay(sender: UIButton) {
+        NSObject.cancelPreviousPerformRequestsWithTarget(self)
+        self.performSelector(#selector(repeatTouchDown), withObject: sender, afterDelay: self.repeatDelay)
+    }
+    
+    @objc private func repeatTouchDown(sender: UIButton) {
+        self.isRepeating = self.isDown
+        if self.isDown {
+            self.touchDownRepeat(sender)
+            self.after(self.repeatFrequency) {
+                self.repeatTouchDown(sender)
+            }
+        }
+    }
+    
+    // ----------------------------------
     //  MARK: - Touch Tracking -
     //
     @objc private func touchUp(sender: UIButton) {
+        self.isDown = false
+        
         self.targetable?.keyReceivedAction(self)
         self.targetable?.key(self, didChangeTrackingState: false, draggedIn: nil)
     }
     
     @objc private func touchDown(sender: UIButton) {
+        self.isDown = true
+        
         self.targetable?.key(self, didChangeTrackingState: true, draggedIn: false)
+        self.enqueueRepeatDelay(sender)
     }
     
     @objc private func dragIn(sender: UIButton) {
+        self.isDown = true
+        
         self.targetable?.key(self, didChangeTrackingState: true, draggedIn: true)
     }
     
@@ -210,7 +240,18 @@ public class KeyView: TintedButton {
     }
     
     @objc private func touchCancelled(sender: UIButton) {
+        self.isDown = false
+        
         self.targetable?.key(self, didChangeTrackingState: false, draggedIn: false)
+    }
+    
+    // ----------------------------------
+    //  MARK: - Helpers -
+    //
+    private func after(delay: Double, block: dispatch_block_t) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+            block()
+        }
     }
 }
 

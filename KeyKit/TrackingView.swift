@@ -12,9 +12,6 @@ internal class TrackingView: UIView {
     
     weak var faceView: FaceView?
     
-    var repeatDelay:     Double = 0.3
-    var repeatFrequency: Double = 0.05
-    
     private var touchingKeys = [UITouch: KeyView]()
     private var trackingKeys = Set<KeyView>()
     
@@ -41,12 +38,6 @@ internal class TrackingView: UIView {
             
             if let keyView = self.keyAt(location) where !self.isTracking(keyView) {
                 self.beginTracking(keyView, forTouch: touch, draggedIn: false)
-                
-                self.after(self.repeatDelay) { [weak self, touch] in
-                    if let strongSelf = self where strongSelf.isTracking(keyView) && touch.window != nil {
-                        strongSelf.repeatTracking(keyView)
-                    }
-                }
             }
         }
     }
@@ -55,7 +46,17 @@ internal class TrackingView: UIView {
         guard let faceView = faceView else { return }
         
         for touch in touches {
-            let location = touch.locationInView(faceView)
+            let location           = touch.locationInView(faceView)
+            let currentTrackingKey = self.trackingKeyFor(touch)
+            
+            /* ---------------------------------
+             ** If a key started repeating don't
+             ** change any tracking state until
+             ** the touch has ended.
+             */
+            if currentTrackingKey != nil && currentTrackingKey!.isRepeating {
+                continue
+            }
             
             /* -----------------------------------
              ** Check to see if the touch is still
@@ -68,7 +69,6 @@ internal class TrackingView: UIView {
                  ** touch is the same key. If not,
                  ** switch tracking to this new key.
                  */
-                let currentTrackingKey = self.trackingKeyFor(touch)
                 if currentTrackingKey != keyView {
                     self.endTrackingFor(touch, cancelled: true)
                     self.beginTracking(keyView, forTouch: touch, draggedIn: true)
@@ -122,24 +122,14 @@ internal class TrackingView: UIView {
         }
     }
     
-    private func repeatTracking(keyView: KeyView) {
-        keyView.sendActionsForControlEvents(.TouchDownRepeat)
-        
-        self.after(self.repeatFrequency) { [weak self] in
-            if let strongSelf = self where strongSelf.isTracking(keyView) {
-                strongSelf.repeatTracking(keyView)
-            }
-        }
-    }
-    
     private func endTrackingFor(touch: UITouch, cancelled: Bool = false) {
-        if let keyView = self.touchingKeys[touch] {
+        if let keyView = self.trackingKeyFor(touch) {
             self.trackingKeys.remove(keyView)
             self.touchingKeys[touch] = nil
             
             keyView.setTrackingState(.Normal)
             
-            if cancelled {
+            if cancelled || keyView.isRepeating {
                 keyView.sendActionsForControlEvents(.TouchCancel)
             } else {
                 keyView.sendActionsForControlEvents(.TouchUpInside)
@@ -161,14 +151,5 @@ internal class TrackingView: UIView {
             }
         }
         return nil
-    }
-    
-    // ----------------------------------
-    //  MARK: - Helpers -
-    //
-    private func after(delay: Double, block: dispatch_block_t) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-            block()
-        }
     }
 }
