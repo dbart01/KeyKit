@@ -9,6 +9,7 @@
 import UIKit
 
 public protocol KeyTargetable: class {
+    func keyShouldRepeat(keyView: KeyView) -> Bool
     func keyDidRepeat(keyView: KeyView)
     func keyReceivedAction(keyView: KeyView)
     func key(keyView: KeyView, didChangeTrackingState tracking: Bool, draggedIn: Bool?)
@@ -28,7 +29,7 @@ public class KeyView: TintedButton {
     public let key: Key
     
     public var repeatDelay:     Double = 0.3
-    public var repeatFrequency: Double = 0.85
+    public var repeatFrequency: Double = 0.085
     
     private weak var targetable: KeyTargetable?
     private var keyColors = [String : UIColor]()
@@ -198,8 +199,11 @@ public class KeyView: TintedButton {
     //  MARK: - Repetition -
     //
     private func enqueueRepeatDelay(sender: UIButton) {
-        NSObject.cancelPreviousPerformRequestsWithTarget(self)
-        self.performSelector(#selector(repeatTouchDown), withObject: sender, afterDelay: self.repeatDelay)
+        let shouldRepeat = self.targetable?.keyShouldRepeat(self) ?? false
+        if shouldRepeat {
+            NSObject.cancelPreviousPerformRequestsWithTarget(self)
+            self.performSelector(#selector(repeatTouchDown), withObject: sender, afterDelay: self.repeatDelay)
+        }
     }
     
     @objc private func repeatTouchDown(sender: UIButton) {

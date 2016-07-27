@@ -267,30 +267,16 @@ extension KeyboardViewController: KeyTargetable {
         self.handle(keyView.key.value, forKey: keyView.key)
     }
     
+    public func keyShouldRepeat(keyView: KeyView) -> Bool {
+        if case .Action(let action) = keyView.key.value where action == .Backspace {
+            return true
+        }
+        return false
+    }
+    
     public func keyDidRepeat(keyView: KeyView) {
-        
-        let continueRepeat: (KeyView) -> Void = { keyView in
-            Click.play()
-            self.keyReceivedAction(keyView)
-        }
-        
-        /* ----------------------------------
-         ** Only allow repeating of backspace
-         ** and character values.
-         */
-        switch keyView.key.value {
-        case .Action(let action):
-            
-            switch action {
-            case .Backspace:
-                continueRepeat(keyView)
-            default:
-                break
-            }
-            
-        case .Char(_):
-            continueRepeat(keyView)
-        }
+        Click.play()
+        self.keyReceivedAction(keyView)
     }
     
     public func key(keyView: KeyView, didChangeTrackingState tracking: Bool, draggedIn: Bool?) {
