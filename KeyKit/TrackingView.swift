@@ -42,8 +42,8 @@ internal class TrackingView: UIView {
             if let keyView = self.keyAt(location) where !self.isTracking(keyView) {
                 self.beginTracking(keyView, forTouch: touch)
                 
-                self.after(self.repeatDelay) { [weak self] in
-                    if let strongSelf = self where strongSelf.isTracking(keyView) {
+                self.after(self.repeatDelay) { [weak self, touch] in
+                    if let strongSelf = self where strongSelf.isTracking(keyView) && touch.window != nil {
                         strongSelf.repeatTracking(keyView)
                     }
                 }
