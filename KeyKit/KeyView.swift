@@ -26,7 +26,7 @@ public class KeyView: TintedButton {
     private(set) var isDown      = false
     private(set) var isRepeating = false
     
-    public let key: Key
+    private(set) public var key: Key
     
     public var repeatDelay:     Double = 0.3
     public var repeatFrequency: Double = 0.085
@@ -257,6 +257,14 @@ public class KeyView: TintedButton {
             block()
         }
     }
+    
+    // ----------------------------------
+    //  MARK: - Mutations -
+    //
+    private func setLabel(label: Key.Label) {
+        key.label = label
+        initLabel()
+    }
 }
 
 // ------------------------------------
@@ -330,5 +338,20 @@ extension UIColor {
         }
         
         return values.joinWithSeparator(",")
+    }
+}
+
+// ----------------------------------
+//  MARK: - Return Key -
+//
+extension KeyView {
+
+    func styleForReturnKeyType(type: UIReturnKeyType) {
+        
+        guard key.value == Key.Value.Action(.Return) else {
+            return
+        }
+        
+        setLabel(.Char(type.description))
     }
 }

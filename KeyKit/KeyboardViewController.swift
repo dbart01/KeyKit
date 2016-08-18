@@ -27,13 +27,17 @@ public class KeyboardViewController: UIViewController {
     public weak var documentProxy: UITextDocumentProxy? {
         didSet {
             self.updateShiftStateIn(self.documentProxy)
+            self.updateReturnKeyState()
         }
     }
     
     public var usePeriodShortcut = true
     public var allowCapsLock     = false
     
-    private var keyboardView: KeyboardView!
+    private lazy var keyboardView: KeyboardView = {
+        let initialFace = self.faceFor(self.initialFaceIdentifier)
+        return KeyboardView(faceView: self.faceViewFor(initialFace))
+    }()
     
     private var shiftKeys:         [KeyView] = []
     private var shiftEnabled:      Bool = false
@@ -43,7 +47,7 @@ public class KeyboardViewController: UIViewController {
     
     private let faces: [String : Face]
     private let initialFaceIdentifier: String
-
+    
     // ----------------------------------
     //  MARK: - Init -
     //
@@ -65,11 +69,11 @@ public class KeyboardViewController: UIViewController {
     public override func loadView() {
         super.loadView()
         
-        self.keyboardView                  = KeyboardView(faceView: nil)
         self.keyboardView.frame            = self.view.bounds
         self.keyboardView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         
-        self.changeFaceTo(self.initialFaceIdentifier, inProxy: self.documentProxy)
+        self.referenceShiftKeys()
+        self.updateShiftStateIn(self.documentProxy)
         
         self.view.addSubview(self.keyboardView)
     }
@@ -82,7 +86,7 @@ public class KeyboardViewController: UIViewController {
     }
     
     public func textDidChange(input: UITextInput?) {
-        
+        updateReturnKeyState()
     }
     
     // ----------------------------------
@@ -145,6 +149,12 @@ public class KeyboardViewController: UIViewController {
                 
                 self.setShiftEnabled(enable)
             }
+        }
+    }
+    
+    private func updateReturnKeyState() {
+        if let keyType = self.documentProxy?.returnKeyType {
+            self.keyboardView.updateReturnKeysFor(keyType)
         }
     }
     
