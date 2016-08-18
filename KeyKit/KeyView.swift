@@ -261,8 +261,8 @@ public class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - Mutations -
     //
-    private func setLabel(label: Key.Label) {
-        key.label = label
+    public func setKey(newKey: Key) {
+        key = newKey
         initLabel()
     }
 }
@@ -338,20 +338,5 @@ extension UIColor {
         }
         
         return values.joinWithSeparator(",")
-    }
-}
-
-// ----------------------------------
-//  MARK: - Return Key -
-//
-extension KeyView {
-
-    func styleForReturnKeyType(type: UIReturnKeyType) {
-        
-        guard key.value == Key.Value.Action(.Return) else {
-            return
-        }
-        
-        setLabel(.Char(type.description))
     }
 }

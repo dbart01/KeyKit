@@ -153,8 +153,21 @@ public class KeyboardViewController: UIViewController {
     }
     
     private func updateReturnKeyState() {
-        if let keyType = self.documentProxy?.returnKeyType {
-            self.keyboardView.updateReturnKeysFor(keyType)
+        
+        guard let keyType = self.documentProxy?.returnKeyType else {
+            return
+        }
+        
+        let returnKeys = self.keyboardView.keyViewsMatching {
+            $0.value == Key.Value.Action(.Return)
+        }
+            
+        for keyView in returnKeys {
+                
+            let oldKey = keyView.key
+            let newKey = Key(label: .Char(keyType.description) , value: oldKey.value, length: oldKey.length, style: oldKey.style)
+                
+            keyView.setKey(newKey)
         }
     }
     

@@ -37,7 +37,7 @@ public struct Key: Equatable {
         case Char(String)
     }
     
-    public var label:  Label
+    public let label:  Label
     public let value:  Value
     public let length: Double
     public let style:  KeyStyle
