@@ -41,14 +41,11 @@ public class KeyboardView: UIView {
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(faceView: FaceView?) {
+    public init(faceView: FaceView) {
         super.init(frame: CGRectZero)
         
         self.initTrackingView()
-        
-        if let faceView = faceView {
-            self.setFaceView(faceView)
-        }
+        self.setFaceView(faceView)
     }
     
     required public init?(coder aDecoder: NSCoder) {

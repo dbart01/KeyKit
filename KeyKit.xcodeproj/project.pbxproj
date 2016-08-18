@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00E7E9B31D65F5AE00617772 /* UIReturnKeyType+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00E7E9B21D65F5AE00617772 /* UIReturnKeyType+Description.swift */; };
 		9A0CD6911D12F4E900281ACE /* KeyKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A0CD6901D12F4E900281ACE /* KeyKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9A0CD69C1D12F77500281ACE /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD6991D12F77500281ACE /* Key.swift */; };
 		9A0CD69D1D12F77500281ACE /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0CD69A1D12F77500281ACE /* Row.swift */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		00E7E9B21D65F5AE00617772 /* UIReturnKeyType+Description.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIReturnKeyType+Description.swift"; sourceTree = "<group>"; };
 		9A0CD68D1D12F4E900281ACE /* KeyKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KeyKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A0CD6901D12F4E900281ACE /* KeyKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyKit.h; sourceTree = "<group>"; };
 		9A0CD6921D12F4E900281ACE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				9A0CD6BF1D12F92900281ACE /* UIView+Extensions.swift */,
+				00E7E9B21D65F5AE00617772 /* UIReturnKeyType+Description.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -225,6 +228,7 @@
 				9A0CD6C21D12F99800281ACE /* KeyboardViewController.swift in Sources */,
 				9A0CD6BD1D12F90300281ACE /* KeyboardView.swift in Sources */,
 				9A0CD6BB1D12F90300281ACE /* RowView.swift in Sources */,
+				00E7E9B31D65F5AE00617772 /* UIReturnKeyType+Description.swift in Sources */,
 				9A2E3D011D1C05BE00BF6BC8 /* Color.swift in Sources */,
 				9A0CD6C01D12F92900281ACE /* UIView+Extensions.swift in Sources */,
 				9A0CD6BC1D12F90300281ACE /* FaceView.swift in Sources */,

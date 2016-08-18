@@ -26,7 +26,7 @@ public class KeyView: TintedButton {
     private(set) var isDown      = false
     private(set) var isRepeating = false
     
-    public let key: Key
+    private(set) public var key: Key
     
     public var repeatDelay:     Double = 0.3
     public var repeatFrequency: Double = 0.085
@@ -256,6 +256,14 @@ public class KeyView: TintedButton {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
             block()
         }
+    }
+    
+    // ----------------------------------
+    //  MARK: - Mutations -
+    //
+    public func setKey(newKey: Key) {
+        key = newKey
+        initLabel()
     }
 }
 
