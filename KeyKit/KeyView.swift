@@ -297,7 +297,7 @@ private struct KeyBackground {
         path.fill()
         
         let inset = space + radius + line * 2.0
-        let image = UIGraphicsGetImageFromCurrentImageContext().resizableImageWithCapInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
+        let image = UIGraphicsGetImageFromCurrentImageContext()!.resizableImageWithCapInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
         UIGraphicsEndImageContext()
         
         return image
