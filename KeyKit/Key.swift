@@ -10,7 +10,7 @@ import Foundation
 
 public protocol KeyActionType {}
 
-@objc public enum KeyStyle: Int {
+@objc public enum KeyStyle: Int32 {
     case Main
     case Alternate
     case Done
