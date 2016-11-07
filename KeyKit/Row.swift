@@ -26,17 +26,17 @@ public struct Row: Equatable {
     // ----------------------------------
     //  MARK: - Mutation -
     //
-    public mutating func add(key: Key) {
+    public mutating func add(_ key: Key) {
         self.keys.append(key)
     }
     
-    public mutating func add(keys: [Key]) {
-        self.keys.appendContentsOf(keys)
+    public mutating func add(_ keys: [Key]) {
+        self.keys.append(contentsOf: keys)
     }
     
-    public mutating func remove(key: Key) {
-        if let index = self.keys.indexOf(key) {
-            self.keys.removeAtIndex(index)
+    public mutating func remove(_ key: Key) {
+        if let index = self.keys.index(of: key) {
+            self.keys.remove(at: index)
         }
     }
 }
