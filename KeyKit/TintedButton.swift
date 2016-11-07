@@ -8,25 +8,25 @@
 
 import UIKit
 
-public class TintedButton: UIButton {
+open class TintedButton: UIButton {
     
     // ----------------------------------
     //  MARK: - States -
     //
-    public override var selected: Bool {
+    open override var isSelected: Bool {
         didSet {
             self.updateTintForState()
         }
     }
     
-    public override var highlighted: Bool {
+    open override var isHighlighted: Bool {
         didSet {
             self.updateTintForState()
         }
     }
     
-    public override func setTitleColor(color: UIColor?, forState state: UIControlState) {
-        super.setTitleColor(color, forState: state)
+    open override func setTitleColor(_ color: UIColor?, for state: UIControlState) {
+        super.setTitleColor(color, for: state)
         self.updateTintForState()
     }
     
@@ -34,6 +34,6 @@ public class TintedButton: UIButton {
     //  MARK: - Updates -
     //
     private func updateTintForState() {
-        self.tintColor = self.titleColorForState(self.state)
+        self.tintColor = self.titleColor(for: self.state)
     }
 }

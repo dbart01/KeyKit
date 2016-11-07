@@ -11,30 +11,30 @@ import Foundation
 public protocol KeyActionType {}
 
 @objc public enum KeyStyle: Int32 {
-    case Main
-    case Alternate
-    case Done
+    case main
+    case alternate
+    case done
 }
 
 public struct Key: Equatable {
     
     public enum Label: Equatable {
-        case Icon(String)
-        case Char(String)
+        case icon(String)
+        case char(String)
     }
     
     public enum Action: Equatable {
-        case Shift
-        case ChangeFace(String)
-        case Backspace
-        case Return
-        case Globe
-        case Custom(KeyActionType)
+        case shift
+        case changeFace(String)
+        case backspace
+        case `return`
+        case globe
+        case custom(KeyActionType)
     }
     
     public enum Value: Equatable {
-        case Action(Key.Action)
-        case Char(String)
+        case action(Key.Action)
+        case char(String)
     }
     
     public let label:  Label
@@ -45,7 +45,7 @@ public struct Key: Equatable {
     // ----------------------------------
     //  MARK: - Init -
     //
-    public init(label: Label, value: Value, length: Double, style: KeyStyle = .Main) {
+    public init(label: Label, value: Value, length: Double, style: KeyStyle = .main) {
         self.label  = label
         self.value  = value
         self.length = length
@@ -53,15 +53,15 @@ public struct Key: Equatable {
     }
     
     public init(label: String, char: String, length: Double) {
-        self.init(label: .Char(label), value: .Char(char), length: length)
+        self.init(label: .char(label), value: .char(char), length: length)
     }
     
-    public init(label: String, action: Key.Action, length: Double, style: KeyStyle = .Main) {
-        self.init(label: .Char(label), value: .Action(action), length: length, style: style)
+    public init(label: String, action: Key.Action, length: Double, style: KeyStyle = .main) {
+        self.init(label: .char(label), value: .action(action), length: length, style: style)
     }
     
     public init(icon: String, char: String, length: Double) {
-        self.init(label: .Icon(icon), value: .Char(char), length: length)
+        self.init(label: .icon(icon), value: .char(char), length: length)
     }
 }
 
@@ -70,9 +70,9 @@ public struct Key: Equatable {
 //
 public func ==(lhs: Key.Label, rhs: Key.Label) -> Bool {
     switch (lhs, rhs) {
-    case (.Icon(let left), .Icon(let right)) where left == right:
+    case (.icon(let left), .icon(let right)) where left == right:
         return true
-    case (.Char(let left), .Char(let right)) where left == right:
+    case (.char(let left), .char(let right)) where left == right:
         return true
     default:
         return false
@@ -81,12 +81,12 @@ public func ==(lhs: Key.Label, rhs: Key.Label) -> Bool {
 
 public func ==(lhs: Key.Action, rhs: Key.Action) -> Bool {
     switch (lhs, rhs) {
-    case (.Shift,     .Shift):     return true
-    case (.Backspace, .Backspace): return true
-    case (.Return,    .Return):    return true
-    case (.Globe,     .Globe):     return true
+    case (.shift,     .shift):     return true
+    case (.backspace, .backspace): return true
+    case (.return,    .return):    return true
+    case (.globe,     .globe):     return true
         
-    case (.ChangeFace(let left), .ChangeFace(let right)) where left == right:
+    case (.changeFace(let left), .changeFace(let right)) where left == right:
         return true
         
     default:
@@ -96,9 +96,9 @@ public func ==(lhs: Key.Action, rhs: Key.Action) -> Bool {
 
 public func ==(lhs: Key.Value, rhs: Key.Value) -> Bool {
     switch (lhs, rhs) {
-    case (.Action(let left), .Action(let right)) where left == right:
+    case (.action(let left), .action(let right)) where left == right:
         return true
-    case (.Char(let left), .Char(let right)) where left == right:
+    case (.char(let left), .char(let right)) where left == right:
         return true
     default:
         return false

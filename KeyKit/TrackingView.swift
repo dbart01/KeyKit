@@ -20,7 +20,7 @@ internal class TrackingView: UIView {
     //
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.multipleTouchEnabled = true
+        self.isMultipleTouchEnabled = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -30,23 +30,23 @@ internal class TrackingView: UIView {
     // ----------------------------------
     //  MARK: - Touch Events -
     //
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let faceView = faceView else { return }
         
         for touch in touches {
-            let location = touch.locationInView(faceView)
+            let location = touch.location(in: faceView)
             
-            if let keyView = self.keyAt(location) where !self.isTracking(keyView) {
+            if let keyView = self.keyAt(location), !self.isTracking(keyView) {
                 self.beginTracking(keyView, forTouch: touch, draggedIn: false)
             }
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let faceView = faceView else { return }
         
         for touch in touches {
-            let location           = touch.locationInView(faceView)
+            let location           = touch.location(in: faceView)
             let currentTrackingKey = self.trackingKeyFor(touch)
             
             /* ---------------------------------
@@ -80,7 +80,7 @@ internal class TrackingView: UIView {
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let _ = faceView else { return }
         
         for touch in touches {
@@ -88,7 +88,7 @@ internal class TrackingView: UIView {
         }
     }
     
-    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+    override func touchesCancelled(_ touches: Set<UITouch>?, with event: UIEvent?) {
         guard let _ = faceView else { return }
         
         if let touches = touches {
@@ -101,38 +101,38 @@ internal class TrackingView: UIView {
     // ----------------------------------
     //  MARK: - Tracking Keys -
     //
-    private func isTracking(keyView: KeyView) -> Bool {
+    private func isTracking(_ keyView: KeyView) -> Bool {
         return self.trackingKeys.contains(keyView)
     }
     
-    private func trackingKeyFor(touch: UITouch) -> KeyView? {
+    private func trackingKeyFor(_ touch: UITouch) -> KeyView? {
         return self.touchingKeys[touch]
     }
     
-    private func beginTracking(keyView: KeyView, forTouch touch: UITouch, draggedIn: Bool) {
+    private func beginTracking(_ keyView: KeyView, forTouch touch: UITouch, draggedIn: Bool) {
         self.touchingKeys[touch] = keyView
         self.trackingKeys.insert(keyView)
         
-        keyView.setTrackingState(.Highlighted)
+        keyView.setTrackingState(.highlighted)
         
         if draggedIn {
-            keyView.sendActionsForControlEvents(.TouchDragEnter)
+            keyView.sendActions(for: .touchDragEnter)
         } else {
-            keyView.sendActionsForControlEvents(.TouchDown)
+            keyView.sendActions(for: .touchDown)
         }
     }
     
-    private func endTrackingFor(touch: UITouch, cancelled: Bool = false) {
+    private func endTrackingFor(_ touch: UITouch, cancelled: Bool = false) {
         if let keyView = self.trackingKeyFor(touch) {
             self.trackingKeys.remove(keyView)
             self.touchingKeys[touch] = nil
             
-            keyView.setTrackingState(.Normal)
+            keyView.setTrackingState(.normal)
             
             if cancelled || keyView.isRepeating {
-                keyView.sendActionsForControlEvents(.TouchCancel)
+                keyView.sendActions(for: .touchCancel)
             } else {
-                keyView.sendActionsForControlEvents(.TouchUpInside)
+                keyView.sendActions(for: .touchUpInside)
             }
         }
     }
@@ -140,12 +140,12 @@ internal class TrackingView: UIView {
     // ----------------------------------
     //  MARK: - Locating Keys -
     //
-    private func keyAt(location: CGPoint) -> KeyView? {
+    private func keyAt(_ location: CGPoint) -> KeyView? {
         guard let faceView = self.faceView else { return nil }
         
         for row in faceView.rows where row.frame.contains(location) {
             
-            let adjustedLocation = row.convertPoint(location, fromView: faceView)
+            let adjustedLocation = row.convert(location, from: faceView)
             for key in row.keys where key.frame.contains(adjustedLocation) {
                 return key
             }

@@ -8,10 +8,10 @@
 
 import UIKit
 
-public class RowView: UIView {
+open class RowView: UIView {
 
-    public let row:  Row
-    public let keys: [KeyView]
+    open let row:  Row
+    open let keys: [KeyView]
     
     // ----------------------------------
     //  MARK: - Init -
@@ -20,7 +20,7 @@ public class RowView: UIView {
         self.row  = row
         self.keys = row.keys.viewsWith(targetable)
         
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
         self.addSubviews(self.keys)
     }
@@ -32,7 +32,7 @@ public class RowView: UIView {
     // ----------------------------------
     //  MARK: - Layout -
     //
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
         var keyViews      = self.keys
@@ -58,7 +58,7 @@ public class RowView: UIView {
          ** style key, we'll pin it to edge.
          */
         let leftKey  = keyViews.first!
-        let pinLeft  = leftKey.key.style == .Alternate
+        let pinLeft  = leftKey.key.style == .alternate
         if pinLeft {
             let keyWidth = keyWidths.removeFirst()
             keyViews.removeFirst()
@@ -72,7 +72,7 @@ public class RowView: UIView {
          ** style key, we'll pin it to edge.
          */
         let rightKey = keyViews.last!
-        let pinRight = rightKey.key.style  == .Alternate
+        let pinRight = rightKey.key.style  == .alternate
         if pinRight {
             let keyWidth = keyWidths.removeLast()
             keyViews.removeLast()
@@ -116,7 +116,7 @@ public class RowView: UIView {
          ** Layout in sequence the remaining
          ** keys regardless of their style.
          */
-        for (index, key) in keyViews.enumerate() {
+        for (index, key) in keyViews.enumerated() {
             key.frame = CGRect(x: offset, y: 0.0, width: keyWidths[index], height: rowHeight)
             offset   += key.frame.width
         }
@@ -126,8 +126,8 @@ public class RowView: UIView {
 // ----------------------------------
 //  MARK: - CollectionType -
 //
-private extension CollectionType where Generator.Element == Key {
-    private func viewsWith(targetable: KeyTargetable) -> [KeyView] {
+private extension Collection where Iterator.Element == Key {
+    func viewsWith(_ targetable: KeyTargetable) -> [KeyView] {
         return self.map {
             KeyView(key: $0, targetable: targetable)
         }

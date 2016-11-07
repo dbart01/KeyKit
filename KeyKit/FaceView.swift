@@ -8,10 +8,10 @@
 
 import UIKit
 
-public class FaceView: UIView {
+open class FaceView: UIView {
     
-    public let face: Face
-    public let rows: [RowView]
+    open let face: Face
+    open let rows: [RowView]
     
     // ----------------------------------
     //  MARK: - Init -
@@ -20,7 +20,7 @@ public class FaceView: UIView {
         self.face = face
         self.rows = face.rows.viewsWith(targetable)
         
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
         self.addSubviews(self.rows)
     }
@@ -32,7 +32,7 @@ public class FaceView: UIView {
     // ----------------------------------
     //  MARK: - Layout -
     //
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
         let height = self.bounds.height / CGFloat(self.rows.count)
@@ -49,8 +49,8 @@ public class FaceView: UIView {
 // ----------------------------------
 //  MARK: - CollectionType -
 //
-private extension CollectionType where Generator.Element == Row {
-    private func viewsWith(targetable: KeyTargetable) -> [RowView] {
+private extension Collection where Iterator.Element == Row {
+    func viewsWith(_ targetable: KeyTargetable) -> [RowView] {
         return self.map {
             RowView(row: $0, targetable: targetable)
         }
