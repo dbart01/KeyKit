@@ -30,22 +30,22 @@ public struct Face {
     // ----------------------------------
     //  MARK: - Mutation -
     //
-    public mutating func add(row: Row) {
+    public mutating func add(_ row: Row) {
         self.rows.append(row)
     }
     
-    public mutating func add(rows: [Row]) {
-        self.rows.appendContentsOf(rows)
+    public mutating func add(_ rows: [Row]) {
+        self.rows.append(contentsOf: rows)
     }
     
-    public mutating func remove(rows: Row) {
-        if let index = self.rows.indexOf(rows) {
-            self.rows.removeAtIndex(index)
+    public mutating func remove(_ rows: Row) {
+        if let index = self.rows.index(of: rows) {
+            self.rows.remove(at: index)
         }
     }
 }
 
-extension CollectionType where Generator.Element == Face {
+extension Collection where Iterator.Element == Face {
     
     var dictionaryByIdentifier: [String : Face] {
         var container = [String : Face]()

@@ -9,27 +9,27 @@
 import UIKit
 
 public protocol KeyTargetable: class {
-    func keyShouldRepeat(keyView: KeyView) -> Bool
-    func keyDidRepeat(keyView: KeyView)
-    func keyReceivedAction(keyView: KeyView)
-    func key(keyView: KeyView, didChangeTrackingState tracking: Bool, draggedIn: Bool?)
+    func keyShouldRepeat(_ keyView: KeyView) -> Bool
+    func keyDidRepeat(_ keyView: KeyView)
+    func keyReceivedAction(_ keyView: KeyView)
+    func key(_ keyView: KeyView, didChangeTrackingState tracking: Bool, draggedIn: Bool?)
 }
 
-public class KeyView: TintedButton {
+open class KeyView: TintedButton {
 
     public enum TrackingState {
-        case Normal
-        case Highlighted
-        case Selected
+        case normal
+        case highlighted
+        case selected
     }
     
     private(set) var isDown      = false
     private(set) var isRepeating = false
     
-    public let key: Key
+    open let key: Key
     
-    public var repeatDelay:     Double = 0.3
-    public var repeatFrequency: Double = 0.085
+    open var repeatDelay:     Double = 0.3
+    open var repeatFrequency: Double = 0.085
     
     private weak var targetable: KeyTargetable?
     private var keyColors = [String : UIColor]()
@@ -37,16 +37,16 @@ public class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - Default Styles -
     //
-    public override static func initialize() {
+    open override static func initialize() {
         let proxy = KeyView.appearance()
         
         // Key fonts
         
-        let font = UIFont.systemFontOfSize(18.0)
+        let font = UIFont.systemFont(ofSize: 18.0)
         
-        proxy.setTextFont(font, forStyle: .Main)
-        proxy.setTextFont(font, forStyle: .Alternate)
-        proxy.setTextFont(font, forStyle: .Done)
+        proxy.setTextFont(font, forStyle: .main)
+        proxy.setTextFont(font, forStyle: .alternate)
+        proxy.setTextFont(font, forStyle: .done)
         
         // Key colors
         
@@ -54,70 +54,70 @@ public class KeyView: TintedButton {
         let textLight = Color.rgb(r: 121, g: 140, b: 156)
         let textAlt   = Color.rgb(r: 255, g: 255, b: 255)
         
-        proxy.setTextColor(textLight, forStyle: .Main,      state: .Normal)
-        proxy.setTextColor(textDark,  forStyle: .Alternate, state: .Normal)
-        proxy.setTextColor(textAlt,   forStyle: .Done,      state: .Normal)
+        proxy.setTextColor(textLight, forStyle: .main,      state: .normal)
+        proxy.setTextColor(textDark,  forStyle: .alternate, state: .normal)
+        proxy.setTextColor(textAlt,   forStyle: .done,      state: .normal)
         
-        proxy.setTextColor(textLight, forStyle: .Main,      state: .Highlighted)
-        proxy.setTextColor(textAlt,   forStyle: .Alternate, state: .Highlighted)
-        proxy.setTextColor(textAlt,   forStyle: .Done,      state: .Highlighted)
+        proxy.setTextColor(textLight, forStyle: .main,      state: .highlighted)
+        proxy.setTextColor(textAlt,   forStyle: .alternate, state: .highlighted)
+        proxy.setTextColor(textAlt,   forStyle: .done,      state: .highlighted)
         
-        proxy.setTextColor(textLight, forStyle: .Main,      state: .Selected)
-        proxy.setTextColor(textAlt,   forStyle: .Alternate, state: .Selected)
-        proxy.setTextColor(textAlt,   forStyle: .Done,      state: .Selected)
+        proxy.setTextColor(textLight, forStyle: .main,      state: .selected)
+        proxy.setTextColor(textAlt,   forStyle: .alternate, state: .selected)
+        proxy.setTextColor(textAlt,   forStyle: .done,      state: .selected)
         
         // Key Backgrounds
         
-        proxy.setKeyColor(Color.rgb(r: 255, g: 255, b: 255), forStyle: .Main,      state: .Normal)
-        proxy.setKeyColor(Color.rgb(r: 196, g: 204, b: 211), forStyle: .Alternate, state: .Normal)
-        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .Done,      state: .Normal)
+        proxy.setKeyColor(Color.rgb(r: 255, g: 255, b: 255), forStyle: .main,      state: .normal)
+        proxy.setKeyColor(Color.rgb(r: 196, g: 204, b: 211), forStyle: .alternate, state: .normal)
+        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .done,      state: .normal)
         
-        proxy.setKeyColor(Color.rgb(r: 235, g: 235, b: 235), forStyle: .Main,      state: .Highlighted)
-        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .Alternate, state: .Highlighted)
-        proxy.setKeyColor(Color.rgb(r:  48, g: 147, b: 166), forStyle: .Done,      state: .Highlighted)
+        proxy.setKeyColor(Color.rgb(r: 235, g: 235, b: 235), forStyle: .main,      state: .highlighted)
+        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .alternate, state: .highlighted)
+        proxy.setKeyColor(Color.rgb(r:  48, g: 147, b: 166), forStyle: .done,      state: .highlighted)
         
-        proxy.setKeyColor(Color.rgb(r: 235, g: 235, b: 235), forStyle: .Main,      state: .Selected)
-        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .Alternate, state: .Selected)
-        proxy.setKeyColor(Color.rgb(r:  48, g: 147, b: 166), forStyle: .Done,      state: .Selected)
+        proxy.setKeyColor(Color.rgb(r: 235, g: 235, b: 235), forStyle: .main,      state: .selected)
+        proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .alternate, state: .selected)
+        proxy.setKeyColor(Color.rgb(r:  48, g: 147, b: 166), forStyle: .done,      state: .selected)
     }
     
     // ----------------------------------
     //  MARK: - UIAppearance -
     //
-    public dynamic func setTextFont(font: UIFont, forStyle style: KeyStyle) {
+    open dynamic func setTextFont(_ font: UIFont, forStyle style: KeyStyle) {
         if self.key.style == style {
             self.titleLabel?.font = font
         }
     }
     
-    public dynamic func textFontForStyle(style: KeyStyle) -> UIFont? {
+    open dynamic func textFontForStyle(_ style: KeyStyle) -> UIFont? {
         if self.key.style == style {
             return self.titleLabel?.font
         }
         return nil
     }
     
-    public dynamic func setTextColor(color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+    open dynamic func setTextColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
         if self.key.style == style {
-            self.setTitleColor(color, forState: state)
+            self.setTitleColor(color, for: state)
         }
     }
     
-    public dynamic func textColorForStyle(style: KeyStyle, state: UIControlState) -> UIColor? {
+    open dynamic func textColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
         if self.key.style == style {
-            return self.titleColorForState(state)
+            return self.titleColor(for: state)
         }
         return nil
     }
     
-    public dynamic func setKeyColor(color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+    open dynamic func setKeyColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
         if self.key.style == style {
             self.keyColors[state.key] = color
-            self.setBackgroundImage(KeyBackground.imageForColor(color), forState: state)
+            self.setBackgroundImage(KeyBackground.imageForColor(color), for: state)
         }
     }
     
-    public dynamic func keyColorForStyle(style: KeyStyle, state: UIControlState) -> UIColor? {
+    open dynamic func keyColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
         if self.key.style == style {
             return self.keyColors[state.key]
         }
@@ -131,12 +131,12 @@ public class KeyView: TintedButton {
         self.key        = key
         self.targetable = targetable
         
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
-        self.addTarget(self, action: #selector(touchUp),        forControlEvents: .TouchUpInside)
-        self.addTarget(self, action: #selector(touchDown),      forControlEvents: .TouchDown)
-        self.addTarget(self, action: #selector(dragIn),         forControlEvents: .TouchDragInside)
-        self.addTarget(self, action: #selector(touchCancelled), forControlEvents: .TouchCancel)
+        self.addTarget(self, action: #selector(touchUp),        for: .touchUpInside)
+        self.addTarget(self, action: #selector(touchDown),      for: .touchDown)
+        self.addTarget(self, action: #selector(dragIn),         for: .touchDragInside)
+        self.addTarget(self, action: #selector(touchCancelled), for: .touchCancel)
         
         self.initState()
         self.initLabel()
@@ -149,11 +149,11 @@ public class KeyView: TintedButton {
     private func initState() {
         
         self.adjustsImageWhenHighlighted = false
-        self.setTitleShadowColor(UIColor.clearColor(), forState: .Normal)
+        self.setTitleShadowColor(UIColor.clear, for: .normal)
         
         if let label = self.titleLabel {
-            label.textAlignment = .Center
-            label.lineBreakMode = .ByClipping
+            label.textAlignment = .center
+            label.lineBreakMode = .byClipping
             label.numberOfLines = 1
         } else {
             fatalError("Failed to configure KeyView label style. No titleLabel found.")
@@ -162,14 +162,14 @@ public class KeyView: TintedButton {
     
     private func initLabel() {
         switch self.key.label {
-        case .Char(let string):
+        case .char(let string):
             
-            self.setTitle(string, forState: .Normal)
+            self.setTitle(string, for: .normal)
             
-        case .Icon(let imageName):
+        case .icon(let imageName):
             
-            if let image = UIImage(named: imageName, inBundle: NSBundle(forClass: self.classForCoder), compatibleWithTraitCollection: nil) {
-                self.setImage(image.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+            if let image = UIImage(named: imageName, in: Bundle(for: self.classForCoder), compatibleWith: nil) {
+                self.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
             } else {
                 fatalError("KeyView failed to find image named: \(imageName).")
             }
@@ -179,34 +179,34 @@ public class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - Tracking -
     //
-    public func setTrackingState(state: TrackingState) {
+    open func setTrackingState(_ state: TrackingState) {
         switch state {
-        case .Normal:
-            self.highlighted = false
-            self.selected    = false
+        case .normal:
+            self.isHighlighted = false
+            self.isSelected    = false
             
-        case .Highlighted:
-            self.highlighted = true
-            self.selected    = false
+        case .highlighted:
+            self.isHighlighted = true
+            self.isSelected    = false
             
-        case .Selected:
-            self.highlighted = false
-            self.selected    = true
+        case .selected:
+            self.isHighlighted = false
+            self.isSelected    = true
         }
     }
     
     // ----------------------------------
     //  MARK: - Repetition -
     //
-    private func enqueueRepeatDelay(sender: UIButton) {
+    private func enqueueRepeatDelay(_ sender: UIButton) {
         let shouldRepeat = self.targetable?.keyShouldRepeat(self) ?? false
         if shouldRepeat {
-            NSObject.cancelPreviousPerformRequestsWithTarget(self)
-            self.performSelector(#selector(repeatTouchDown), withObject: sender, afterDelay: self.repeatDelay)
+            NSObject.cancelPreviousPerformRequests(withTarget: self)
+            self.perform(#selector(repeatTouchDown), with: sender, afterDelay: self.repeatDelay)
         }
     }
     
-    @objc private func repeatTouchDown(sender: UIButton) {
+    @objc private func repeatTouchDown(_ sender: UIButton) {
         self.isRepeating = self.isDown
         if self.isDown {
             self.touchDownRepeat(sender)
@@ -219,31 +219,31 @@ public class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - Touch Tracking -
     //
-    @objc private func touchUp(sender: UIButton) {
+    @objc private func touchUp(_ sender: UIButton) {
         self.isDown = false
         
         self.targetable?.keyReceivedAction(self)
         self.targetable?.key(self, didChangeTrackingState: false, draggedIn: nil)
     }
     
-    @objc private func touchDown(sender: UIButton) {
+    @objc private func touchDown(_ sender: UIButton) {
         self.isDown = true
         
         self.targetable?.key(self, didChangeTrackingState: true, draggedIn: false)
         self.enqueueRepeatDelay(sender)
     }
     
-    @objc private func dragIn(sender: UIButton) {
+    @objc private func dragIn(_ sender: UIButton) {
         self.isDown = true
         
         self.targetable?.key(self, didChangeTrackingState: true, draggedIn: true)
     }
     
-    @objc private func touchDownRepeat(sender: UIButton) {
+    @objc private func touchDownRepeat(_ sender: UIButton) {
         self.targetable?.keyDidRepeat(self)
     }
     
-    @objc private func touchCancelled(sender: UIButton) {
+    @objc private func touchCancelled(_ sender: UIButton) {
         self.isDown = false
         
         self.targetable?.key(self, didChangeTrackingState: false, draggedIn: false)
@@ -252,8 +252,8 @@ public class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - Helpers -
     //
-    private func after(delay: Double, block: dispatch_block_t) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+    private func after(_ delay: Double, block: @escaping ()->()) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             block()
         }
     }
@@ -266,7 +266,7 @@ private struct KeyBackground {
     
     private static var images = [String : UIImage]()
     
-    private static func imageForColor(color: UIColor) -> UIImage {
+    fileprivate static func imageForColor(_ color: UIColor) -> UIImage {
         let colorKey = color.key
         if let image = self.images[colorKey] {
             return image
@@ -279,11 +279,11 @@ private struct KeyBackground {
         }
     }
     
-    private static func drawBackgroudImageWith(color: UIColor) -> UIImage {
+    private static func drawBackgroudImageWith(_ color: UIColor) -> UIImage {
         
         let space  = CGFloat(3.0)
         let radius = CGFloat(6.0)
-        let line   = 1.0 / UIScreen.mainScreen().scale * 3.0
+        let line   = 1.0 / UIScreen.main.scale * 3.0
         
         let length = (space * 2.0) + (radius * 2.0) + line + 10.0
         let rect   = CGRect(x: 0.0, y: 0.0, width: length, height: length)
@@ -297,7 +297,7 @@ private struct KeyBackground {
         path.fill()
         
         let inset = space + radius + line * 2.0
-        let image = UIGraphicsGetImageFromCurrentImageContext()!.resizableImageWithCapInsets(UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
+        let image = UIGraphicsGetImageFromCurrentImageContext()!.resizableImage(withCapInsets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
         UIGraphicsEndImageContext()
         
         return image
@@ -318,17 +318,15 @@ extension UIControlState {
 //
 extension UIColor {
     var key: String {
-        let color      = self.CGColor
-        let count      = CGColorGetNumberOfComponents(color)
-        let components = CGColorGetComponents(color)
+        let color      = self.cgColor
+        let components = color.components!
         
         var values = [String]()
-        for i in 0..<count {
-            let component = (components + i).memory
-            let rounded   = Int(component * 100.0)
+        for component in components {
+            let rounded = Int(component * 100.0)
             values.append("\(rounded)")
         }
         
-        return values.joinWithSeparator(",")
+        return values.joined(separator: ",")
     }
 }

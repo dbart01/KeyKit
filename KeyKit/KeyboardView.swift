@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class KeyboardView: UIView {
+open class KeyboardView: UIView {
     
     private(set) var faceView: FaceView! {
         didSet {
@@ -21,7 +21,7 @@ public class KeyboardView: UIView {
     // ----------------------------------
     //  MARK: - Default Styles -
     //
-    public override static func initialize() {
+    open override static func initialize() {
         let proxy = KeyboardView.appearance()
         
         proxy.setKeyboardColor(Color.rgb(r: 237, g: 240, b: 242))
@@ -30,11 +30,11 @@ public class KeyboardView: UIView {
     // ----------------------------------
     //  MARK: - UIAppearance -
     //
-    public dynamic func setKeyboardColor(color: UIColor) {
+    open dynamic func setKeyboardColor(_ color: UIColor) {
         self.backgroundColor = color
     }
     
-    public dynamic func keyboardColor() -> UIColor? {
+    open dynamic func keyboardColor() -> UIColor? {
         return self.backgroundColor
     }
     
@@ -42,7 +42,7 @@ public class KeyboardView: UIView {
     //  MARK: - Init -
     //
     public init(faceView: FaceView?) {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         
         self.initTrackingView()
         
@@ -60,17 +60,17 @@ public class KeyboardView: UIView {
     //
     private func initTrackingView() {
         self.trackingView                  = TrackingView(frame: self.bounds)
-        self.trackingView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-        self.trackingView.backgroundColor  = UIColor.clearColor()
+        self.trackingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.trackingView.backgroundColor  = UIColor.clear
         
         self.addSubview(self.trackingView)
     }
     
     private func surfaceTrackingView() {
-        self.bringSubviewToFront(self.trackingView)
+        self.bringSubview(toFront: self.trackingView)
     }
     
-    private func startTracking(faceView: FaceView) {
+    private func startTracking(_ faceView: FaceView) {
         self.trackingView.faceView = faceView
     }
     
@@ -78,7 +78,7 @@ public class KeyboardView: UIView {
     //  MARK: - Setters -
     //
     @nonobjc
-    public func setFaceView(faceView: FaceView) {
+    open func setFaceView(_ faceView: FaceView) {
         if self.faceView != nil {
             self.faceView.removeFromSuperview()
         }
@@ -93,7 +93,7 @@ public class KeyboardView: UIView {
     // ----------------------------------
     //  MARK: - Layout -
     //
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
         self.faceView.frame     = self.bounds
@@ -103,7 +103,7 @@ public class KeyboardView: UIView {
     // ----------------------------------
     //  MARK: - Key Queries -
     //
-    public func keyViewsMatching(predicate: (Key) -> Bool) -> [KeyView] {
+    open func keyViewsMatching(_ predicate: (Key) -> Bool) -> [KeyView] {
         var results = [KeyView]()
         for row in self.faceView.rows {
             for key in row.keys {
