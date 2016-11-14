@@ -14,6 +14,7 @@ public protocol KeyActionType {}
     case main
     case alternate
     case done
+    case custom
 }
 
 public struct Key: Equatable {
