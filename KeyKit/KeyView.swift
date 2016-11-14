@@ -28,6 +28,7 @@ open class KeyView: TintedButton {
     
     open let key: Key
     
+    open var showsBackground: Bool   = true
     open var repeatDelay:     Double = 0.3
     open var repeatFrequency: Double = 0.085
     
@@ -111,6 +112,11 @@ open class KeyView: TintedButton {
     }
     
     open dynamic func setKeyColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+        guard self.showsBackground else {
+            self.setBackgroundImage(nil, for: state)
+            return
+        }
+        
         if self.key.style == style {
             self.keyColors[state.key] = color
             self.setBackgroundImage(KeyBackground.imageForColor(color), for: state)
@@ -168,11 +174,15 @@ open class KeyView: TintedButton {
             
         case .icon(let imageName):
             
-            if let image = UIImage(named: imageName, in: Bundle(for: self.classForCoder), compatibleWith: nil) {
-                self.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
+            let image: UIImage
+            if let bundleImage = UIImage(named: imageName) {
+                image = bundleImage
+            } else if let keyKitImage = UIImage(named: imageName, in: Bundle(for: self.classForCoder), compatibleWith: nil) {
+                image = keyKitImage
             } else {
                 fatalError("KeyView failed to find image named: \(imageName).")
             }
+            self.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
         }
     }
     
