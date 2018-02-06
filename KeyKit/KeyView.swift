@@ -16,7 +16,7 @@ public protocol KeyTargetable: class {
 }
 
 open class KeyView: TintedButton {
-
+    
     public enum TrackingState {
         case normal
         case highlighted
@@ -38,7 +38,7 @@ open class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - Default Styles -
     //
-    open override static func initialize() {
+    open static var setDefaultAppearance: () -> Void = {
         let proxy = KeyView.appearance()
         
         // Key fonts
@@ -80,38 +80,39 @@ open class KeyView: TintedButton {
         proxy.setKeyColor(Color.rgb(r: 235, g: 235, b: 235), forStyle: .main,      state: .selected)
         proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .alternate, state: .selected)
         proxy.setKeyColor(Color.rgb(r:  48, g: 147, b: 166), forStyle: .done,      state: .selected)
-    }
+        return {}
+    }()
     
     // ----------------------------------
     //  MARK: - UIAppearance -
     //
-    open dynamic func setTextFont(_ font: UIFont, forStyle style: KeyStyle) {
+    @objc open dynamic func setTextFont(_ font: UIFont, forStyle style: KeyStyle) {
         if self.key.style == style {
             self.titleLabel?.font = font
         }
     }
     
-    open dynamic func textFontForStyle(_ style: KeyStyle) -> UIFont? {
+    @objc open dynamic func textFontForStyle(_ style: KeyStyle) -> UIFont? {
         if self.key.style == style {
             return self.titleLabel?.font
         }
         return nil
     }
     
-    open dynamic func setTextColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+    @objc open dynamic func setTextColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
         if self.key.style == style {
             self.setTitleColor(color, for: state)
         }
     }
     
-    open dynamic func textColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
+    @objc open dynamic func textColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
         if self.key.style == style {
             return self.titleColor(for: state)
         }
         return nil
     }
     
-    open dynamic func setKeyColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+    @objc open dynamic func setKeyColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
         guard self.showsBackground else {
             self.setBackgroundImage(nil, for: state)
             return
@@ -123,7 +124,7 @@ open class KeyView: TintedButton {
         }
     }
     
-    open dynamic func keyColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
+    @objc open dynamic func keyColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
         if self.key.style == style {
             return self.keyColors[state.key]
         }
@@ -134,6 +135,7 @@ open class KeyView: TintedButton {
     //  MARK: - Init -
     //
     public init(key: Key, targetable: KeyTargetable) {
+        _               = KeyView.setDefaultAppearance
         self.key        = key
         self.targetable = targetable
         
@@ -153,7 +155,6 @@ open class KeyView: TintedButton {
     }
     
     private func initState() {
-        
         self.adjustsImageWhenHighlighted = false
         self.setTitleShadowColor(UIColor.clear, for: .normal)
         
