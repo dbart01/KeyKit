@@ -85,33 +85,33 @@ open class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - UIAppearance -
     //
-    open dynamic func setTextFont(_ font: UIFont, forStyle style: KeyStyle) {
+    @objc open dynamic func setTextFont(_ font: UIFont, forStyle style: KeyStyle) {
         if self.key.style == style {
             self.titleLabel?.font = font
         }
     }
     
-    open dynamic func textFontForStyle(_ style: KeyStyle) -> UIFont? {
+    @objc open dynamic func textFontForStyle(_ style: KeyStyle) -> UIFont? {
         if self.key.style == style {
             return self.titleLabel?.font
         }
         return nil
     }
     
-    open dynamic func setTextColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+    @objc open dynamic func setTextColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
         if self.key.style == style {
             self.setTitleColor(color, for: state)
         }
     }
     
-    open dynamic func textColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
+    @objc open dynamic func textColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
         if self.key.style == style {
             return self.titleColor(for: state)
         }
         return nil
     }
     
-    open dynamic func setKeyColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
+    @objc open dynamic func setKeyColor(_ color: UIColor, forStyle style: KeyStyle, state: UIControlState) {
         guard self.showsBackground else {
             self.setBackgroundImage(nil, for: state)
             return
@@ -123,7 +123,7 @@ open class KeyView: TintedButton {
         }
     }
     
-    open dynamic func keyColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
+    @objc open dynamic func keyColorForStyle(_ style: KeyStyle, state: UIControlState) -> UIColor? {
         if self.key.style == style {
             return self.keyColors[state.key]
         }

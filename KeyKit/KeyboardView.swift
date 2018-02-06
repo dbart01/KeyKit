@@ -30,11 +30,11 @@ open class KeyboardView: UIView {
     // ----------------------------------
     //  MARK: - UIAppearance -
     //
-    open dynamic func setKeyboardColor(_ color: UIColor) {
+    @objc open dynamic func setKeyboardColor(_ color: UIColor) {
         self.backgroundColor = color
     }
     
-    open dynamic func keyboardColor() -> UIColor? {
+    @objc open dynamic func keyboardColor() -> UIColor? {
         return self.backgroundColor
     }
     
