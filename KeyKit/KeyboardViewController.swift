@@ -289,12 +289,3 @@ extension KeyboardViewController: KeyTargetable {
         }
     }
 }
-
-// ----------------------------------
-//  MARK: - String -
-//
-private extension String {
-    func suffix(_ length: Int) -> String {
-        return String(self.characters.suffix(length))
-    }
-}
