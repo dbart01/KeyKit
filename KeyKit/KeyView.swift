@@ -16,7 +16,7 @@ public protocol KeyTargetable: class {
 }
 
 open class KeyView: TintedButton {
-
+    
     public enum TrackingState {
         case normal
         case highlighted
@@ -38,7 +38,7 @@ open class KeyView: TintedButton {
     // ----------------------------------
     //  MARK: - Default Styles -
     //
-    open override static func initialize() {
+    open static var setDefaultAppearance: () -> Void = {
         let proxy = KeyView.appearance()
         
         // Key fonts
@@ -80,7 +80,8 @@ open class KeyView: TintedButton {
         proxy.setKeyColor(Color.rgb(r: 235, g: 235, b: 235), forStyle: .main,      state: .selected)
         proxy.setKeyColor(Color.rgb(r:  70, g: 183, b: 204), forStyle: .alternate, state: .selected)
         proxy.setKeyColor(Color.rgb(r:  48, g: 147, b: 166), forStyle: .done,      state: .selected)
-    }
+        return {}
+    }()
     
     // ----------------------------------
     //  MARK: - UIAppearance -
@@ -134,6 +135,7 @@ open class KeyView: TintedButton {
     //  MARK: - Init -
     //
     public init(key: Key, targetable: KeyTargetable) {
+        _               = KeyView.setDefaultAppearance
         self.key        = key
         self.targetable = targetable
         
@@ -153,7 +155,6 @@ open class KeyView: TintedButton {
     }
     
     private func initState() {
-        
         self.adjustsImageWhenHighlighted = false
         self.setTitleShadowColor(UIColor.clear, for: .normal)
         

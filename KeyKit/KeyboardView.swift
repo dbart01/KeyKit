@@ -21,11 +21,13 @@ open class KeyboardView: UIView {
     // ----------------------------------
     //  MARK: - Default Styles -
     //
-    open override static func initialize() {
+    open static var setDefaultAppearance: () -> Void = {
         let proxy = KeyboardView.appearance()
         
         proxy.setKeyboardColor(Color.rgb(r: 237, g: 240, b: 242))
-    }
+        return {}
+    }()
+ 
     
     // ----------------------------------
     //  MARK: - UIAppearance -
@@ -42,6 +44,7 @@ open class KeyboardView: UIView {
     //  MARK: - Init -
     //
     public init(faceView: FaceView?) {
+        _ = KeyboardView.setDefaultAppearance
         super.init(frame: CGRect.zero)
         
         self.initTrackingView()
